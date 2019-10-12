@@ -1,0 +1,94 @@
+{
+  "index": {
+    "Title": "欢 迎 使 用",
+	"Start": "开始",
+	"CreatePlan": "创建方案",
+	"ImportPlan": "导入方案",
+	"TheRecentPlan": "最近方案",
+	"Alibaba": "阿里巴巴",
+	"Baidu": "百度",
+	"BankOfChina": "中国银行",
+	"More": "更多",
+	"Help": "帮助",
+	"UpdateLog": "更新日志",
+	"HelpDocument": "帮助文档",
+	"Updates": "检查更新",
+	"AboutUs": "关于我们"
+  },
+  "details":{
+	"abstract":{
+		"customername": "客户名称",
+		"projectname": "项目名称",
+		"scenarioname":"方案名称",
+		"salesmanager":"销售经理",
+		"deliverydate":"发货日期",
+		"salesbeforeManager":"售前经理",
+		"postscript":"备注信息"
+	},
+	"header":{
+		"EditPackages": "编辑方案",
+		"AddTheMachine": "添加机器",
+		"TheOverallValidation": "整体验证",
+		"ImportMachine": "导入机器",
+		"ExportPlan": "导出方案"
+	},
+	"lists":{
+		"scenarioName": "方案名称",
+		"ProjectIntroduction": "方案简介",
+		"ProgramOverview": "方案概述",
+		"PriceStatistics": "价格统计",
+		"machineConfiguration": "机器配置"
+	},
+	"detailList": {
+		"serialNumber": "序号",
+		"productName": "产品名称",
+		"remarks": "备注名称",
+		"quantity": "数量",
+		"ListPrice": "列表价",
+		"discount": "折扣",
+		"salesPriceNoTax": "销售价（未税）",
+		"salesPricePlusDuty": "销售价（含税）"
+	},
+	"machine": {
+		"hardware": "硬件配置",
+		"software": "软件配置",
+		"operatingSystem": "操作系统",
+		"rests": "其他软件"
+	},
+	"buttons": {
+		"machineConfiguration": "配置机器",
+		"ExportMachine": "导出机器"
+	}
+  },
+	"Processor": {
+		"lists": {
+			"computationalNode":{
+				"title":"计算节点",
+				"content1":"计算机节点数"
+			},
+			"CPUconfiguration":{
+				"title":"CPU配置",
+				"content1":"已使用插槽"
+			},
+			"ActiveConfiguration":{
+				"title":"激活配置",
+				"content1":"已激活核心数量"
+			},
+			"promptMessage":{
+				"title":"提示信息",
+				"content1":"配置1颗CPU时，可配置16根内存，8个PCIe卡。",
+				"content2":"配置2颗CPU时，可配置32根内存，11个PCIe卡。"
+			}
+		}
+	},
+	"Memory": {
+		"lists":{
+			"MemoryAllocation":{
+				"title":"内存配置",
+				"content1":"添加内存条",
+				"content2":"已使用插槽",
+				"content3":"总容量"
+			}
+		}
+	}
+}

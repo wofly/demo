@@ -1,0 +1,94 @@
+{
+  "index": {
+    "Title": "Welcome to use",
+	"Start": "Start",
+	"CreatePlan": "CreatePlan",
+	"ImportPlan": "ImportPlan",
+	"TheRecentPlan": "TheRecentPlan",
+	"Alibaba": "Alibaba",
+	"Baidu": "Baidu",
+	"BankOfChina": "b.o.c",
+	"More": "More",
+	"Help": "Help",
+	"UpdateLog": "UpdateLog",
+	"HelpDocument": "HelpDocument",
+	"Updates": "Updates",
+	"AboutUs": "About Us"
+  },
+  "details": {
+	"abstract":{
+		"customername": "Customername",
+		"projectname": "Projectname",
+		"scenarioname":"Scenarioname",
+		"salesmanager":"Salesmanager",
+		"deliverydate":"Deliverydate",
+		"salesbeforeManager":"SalesBeforeManager",
+		"postscript":"Postscript"
+	  },
+	"header":{
+		"EditPackages": "EditTheMachine",
+		"AddTheMachine": "AddTheMachine",
+		"TheOverallValidation": "TheOverallValidation",
+		"ImportMachine": "ImportMachine",
+		"ExportPlan": "ExportPlan"
+	  },
+	"lists":{
+		"scenarioName": "TemplateProjectName",
+		"ProjectIntroduction": "ProjectIntroduction",
+		"ProgramOverview": "ProgramOverview",
+		"PriceStatistics": "PriceStatistics",
+		"machineConfiguration": "MachineConfiguration"
+	},
+	"detailList": {
+		"serialNumber": "SerialNumber",
+		"productName": "ProductName",
+		"remarks": "Remarks",
+		"quantity": "Quantity",
+		"ListPrice": "ListPrice",
+		"discount": "Discount",
+		"salesPriceNoTax": "SalesPrice（NoTax）",
+		"salesPricePlusDuty": "SalesPrice（PlusDuty）"
+	},
+	"machine": {
+		"hardware": "Hardware",
+		"software": "Software",
+		"operatingSystem": "Operating system",
+		"OtherSoftware": "Other software"
+	},
+	"buttons": {
+		"machineConfiguration": "Machine configuration",
+		"ExportMachine": "Export machine"
+	}
+  },
+	"Processor": {
+		"lists": {
+			"computationalNode":{
+				"title":"ComputationalNode",
+				"content1":"Number of computer nodes"
+			},
+			"CPUconfiguration":{
+				"title":"CPUconfiguration",
+				"content1":"Slot already in use"
+			},
+			"ActiveConfiguration":{
+				"title":"ActiveConfiguration",
+				"content2":"The number of cores that have been activated"
+			},
+			"promptMessage": {
+				"title":"PromptMessage",
+				"content1":"For every 1 cpus configured, 16 memory sticks and 8 PCIE CARDS can be configured.",
+				"content2":"For every 2 cpus configured, 32 memory sticks and 11 PCIE CARDS can be configured."
+			}
+		}
+	},
+	"Memory": {
+		"lists":{
+			"MemoryAllocation":{
+				"title":"Memory Allocation",
+				"content1":"Add memory",
+				"content2":"Slot already in use",
+				"content3":"total capacity"
+			}
+		}
+	}
+}

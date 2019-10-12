@@ -1,0 +1,4 @@
+owner: CaanDoll
+repo: easy-invoices
+provider: github
+updaterCacheDirName: ips-configurator-updater

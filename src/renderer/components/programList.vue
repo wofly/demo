@@ -1,7 +1,7 @@
 <template>
     <!--应用程序-->
     <div class="wrap">
-        <div class="font-style"><p>选择应用程序</p></div>
+        <div class="font-style"><p>{{$t('Application.lists.SelectApplication.title')}}</p></div>
         <ul class="main-list" v-for='(item,index) in optionsDate' :key="index">
             <li style="height: 50px;">
                 <div class="checksele">
@@ -17,7 +17,7 @@
 
                     <el-input class="el-mount"  size="mini" v-model="input" disabled="disabled"></el-input>
 
-                    <span style="margin-left: 50px">维保期限：</span>
+                    <span style="margin-left: 50px">{{$t('Application.lists.SelectApplication.content1')}}：</span>
                      <el-select  class="select-year" placeholder="请选择" v-model="item.value2" size="mini" @change="selectNameAdd(index,item.value2) ">
                         <el-option
                                 v-for="(ite,int) in item.yearsDate"
@@ -67,12 +67,6 @@ export default {
         and cs.id=detail.component_id)
         )and software_type=3) tn) and  categroy_id=20) temptable
         where temptable.component_id=component_software.id`
-        /*cpu激活数获取*/
-      const SQL_COUNT = `select component_count from product_programme_detail where categroy_id=11
-        and solution_id= ${localStorage.solutionId}
-        and template_id=${localStorage.templateId}
-        and product_id='${localStorage.productId}'
-        and machine_id='${localStorage.machineId}'`
        /*原始数据获取*/
        const SQL_FIRST = `select distinct cs.id, software_des,years from component_software cs left join software_software ss on cs.id=ss.choice_software_id where cs.id in (134,135)`;
 
@@ -124,19 +118,6 @@ export default {
                })
            })
        })
-        //获取数量
-       await this.$db.all(SQL_COUNT, (err, res) => {
-            if (err) {
-                this.$logger(err);
-                this.$Notice.error({
-                    title: '数据获取失败',
-                    desc: err
-                });
-            } else {
-                console.log('resmount',res)
-                this.input=res[0].component_count
-            }
-        });
       },
       getSWWA(softwareId,resA,name){
           const SQL_WB = `select * from component_software software where id in(select carry_software_id from software_software
@@ -199,9 +180,9 @@ export default {
                   const time = new Date().getTime();
                   const SQL = `INSERT INTO product_programme_detail
                 ('product_id','machine_id','categroy_id','component_id','seq_Key','solution_id','component_count','template_id')VALUES
-                ('${localStorage.productId}','${localStorage.machineId}','15','${this.optionsDate[index].softwareId}','${time}','${localStorage.solutionId}','${this.input}','${localStorage.templateId}'),
+                ('${localStorage.productId}','${localStorage.machineId}','15','${this.optionsDate[index].softwareId}','${time}','${localStorage.solutionId}','1','${localStorage.templateId}'),
                 ('${localStorage.productId}','${localStorage.machineId}','${this.optionsDate[index].yearsDate[0].categroy_id}','${this.optionsDate[index].yearsDate[0].fatherId}','${time}','${localStorage.solutionId}','1','${localStorage.templateId}'),
-                ('${localStorage.productId}','${localStorage.machineId}','${this.optionsDate[index].yearsDate[0].categroy_id}','${this.optionsDate[index].yearsDate[0].childId}','${time}','${localStorage.solutionId}','1','${localStorage.templateId}')`
+                ('${localStorage.productId}','${localStorage.machineId}','${this.optionsDate[index].yearsDate[0].categroy_id}','${this.optionsDate[index].yearsDate[0].childId}','${time}','${localStorage.solutionId}','${this.input}','${localStorage.templateId}')`
                   this.$db.run(SQL, (err, res) => {
                       if (err) {
                           this.$logger(err);
@@ -237,9 +218,9 @@ export default {
                   });
               }else{
                   let updateSql=[
-                      `UPDATE product_programme_detail set 'component_count'='${this.input}',component_id='${this.optionsDate[index].softwareId}' where id=${this.optionsDate[index].id} `,
+                      `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.optionsDate[index].softwareId}' where id=${this.optionsDate[index].id} `,
                       `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.optionsDate[index].yearsDate[ind].fatherId}' where id=${this.optionsDate[index].falId} `,
-                      `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.optionsDate[index].yearsDate[ind].childId}' where id=${this.optionsDate[index].childId} `,
+                      `UPDATE product_programme_detail set 'component_count'='${this.input}',component_id='${this.optionsDate[index].yearsDate[ind].childId}' where id=${this.optionsDate[index].childId} `,
 
                   ]
                   updateSql.forEach(item=>{
@@ -247,7 +228,7 @@ export default {
                           if (res) {
                               console.log('修改失败');
                           } else {
-                              console.log('修改成功');
+                              console.log('修改成功',updateSql);
                           }
                       });
                   })
@@ -278,8 +259,27 @@ export default {
       },
   },
     beforeRouteEnter(from,to,next){
+        /*cpu激活数获取*/
+        const SQL_COUNT = `select component_count from product_programme_detail where categroy_id=11
+        and solution_id= ${localStorage.solutionId}
+        and template_id=${localStorage.templateId}
+        and product_id='${localStorage.productId}'
+        and machine_id='${localStorage.machineId}'`
         next(vm=>{
             vm.$emit('comup',from.query.id)
+            //获取数量
+             vm.$db.all(SQL_COUNT, (err, res) => {
+                if (err) {
+                    this.$logger(err);
+                    this.$Notice.error({
+                        title: '数据获取失败',
+                        desc: err
+                    });
+                } else {
+                    console.log('resmount',res)
+                    vm.input=res[0].component_count
+                }
+            });
         })
     },
     beforeRouteLeave(to,from,next){

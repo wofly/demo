@@ -14,8 +14,16 @@ import ProgrammeAdd from './pages/Programme/ProgrammeAdd.vue';
 import SelectTemplate from './pages/Programme/SelectTemplate.vue';
 /* -------------配件-------------------*/
 import AccessoriesSelection from './pages/Programme/AccessoriesSelection.vue';
+/* -------------配件 线缆-------------------*/
+import AccessoriesCable from './pages/Programme/AccessoriesCable.vue';
+/* -------------配件 其他-------------------*/
+import AccessoriesOther from './pages/Programme/AccessoriesOther.vue';
 /* -------------内部硬盘------------------*/
 import InsideHardDiskDrive from './pages/Programme/InsideHardDiskDrive.vue';
+/* -------------外部硬盘（扩展柜）------------------*/
+import ExternalHardDisk from './pages/Programme/ExternalHardDisk.vue';
+/* -------------外部扩展柜------------------*/
+import ExternalHardDiskExpansion from './pages/Programme/ExternalHardDiskExpansion.vue';
 /* -------------CPU------------------*/
 import Processor from './components/Processor.vue';
 /* -------------内存------------------*/
@@ -24,13 +32,15 @@ import Memory from './pages/Programme/Memory.vue';
 import PowerLine from './pages/Programme/PowerLine.vue';
 /* -------------内部PCle------------------*/
 import InteriorPcle from './components/InteriorPcle.vue';
+/* -------------外部PCle------------------*/
+import ExternalPcie from './components/ExternalPcie.vue';
 /* -------------软件组件------------------*/
 import Downen from './components/Downen.vue';
-/* -------------软件配置子组件------------------*/
+/* -------------软件配置子组件逻辑分区------------------*/
 import Logic from './components/Logic.vue';
-/* -------------软件配置子组件------------------*/
+/* -------------软件配置子组件操作系统------------------*/
 import Operation from './components/Operation.vue';
-/* -------------软件配置子组件------------------*/
+/* -------------软件配置子组件Y应用程序------------------*/
 import ProgramList from './components/programList.vue';
 /* -------------确认组件------------------*/
 import Affirm from './components/Affirm.vue';
@@ -38,7 +48,7 @@ import Affirm from './components/Affirm.vue';
 import ProBack from './components/ProBack.vue';
 /*---------------前置硬盘--------------------*/
 import FrontHardDisk from './pages/Programme/FrontHardDisk.vue';
-/*---------------前置硬盘--------------------*/
+/*---------------中置硬盘--------------------*/
 import MiddleHardDisk from './pages/Programme/MiddleHardDisk.vue';
 
 const menu = [
@@ -68,17 +78,35 @@ const menu = [
     path: '/Goods',
     component: Goods,
   },
+
   {
     path: '/Projectpar',
     component: Projectpar,
   },
+  /* ------------- 内部硬盘  前置硬盘----------------*/
   {
     path: '/FrontHardDisk',
     component: FrontHardDisk,
   },
+  /* ------------- 内部硬盘  中置硬盘----------------*/
   {
     path: '/MiddleHardDisk',
     component: MiddleHardDisk,
+  },
+  /* ------------- 外部扩展柜----------------*/
+  {
+    path: '/ExternalHardDiskExpansion',
+    component: ExternalHardDiskExpansion,
+  },
+  /* ------------- 配置  线缆----------------*/
+  {
+    path: '/AccessoriesCable',
+    component: AccessoriesCable,
+  },
+  /* ------------- 配置  其他----------------*/
+  {
+    path: '/AccessoriesOther',
+    component: AccessoriesOther,
   },
   { // 暂时用一下，后期要换
     path: '/Hardware',
@@ -91,6 +119,10 @@ const menu = [
         path: '/Hardware/InsideHardDiskDrive',
         component: InsideHardDiskDrive,
 
+      }, {/* -------------外部硬盘（扩展柜）------------------*/
+        path: '/Hardware/ExternalHardDisk',
+        component: ExternalHardDisk,
+
       }, {/* -------------硬盘------------------*/
         path: '/Hardware/Processor',
         component: Processor,
@@ -101,9 +133,13 @@ const menu = [
         path: '/Hardware/PowerLine',
         component: PowerLine,
       },{/* -------------内部PCle------------------*/
-            path: '/Hardware/InteriorPcle',
-            component: InteriorPcle,
-        }
+        path: '/Hardware/InteriorPcle',
+        component: InteriorPcle,
+      } ,{/* -------------外部PCle------------------*/
+        path: '/Hardware/ExternalPcie',
+        component: ExternalPcie,
+      }
+
     ],
   },
   {

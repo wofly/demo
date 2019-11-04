@@ -129,6 +129,7 @@ export default {
                           return prev;
                       }
                   }, 0);
+                  sums[2] = ' N/A';
                   sums[5] = ' N/A';
               } else {
                   sums[index] = 'N/A';

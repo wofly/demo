@@ -11,7 +11,9 @@ let m_mapOfRecords = null;
 let m_mapOfReferences = null;
 let m_sError = null;
 
-const  cfrParser = {
+const  cfrParser = (listOfLines, isCheckSum, isInstalled, isTarget) => {
+    return parseCfr(listOfLines, isCheckSum, isInstalled, isTarget)
+}
     /**
      * <p>Transforms the list of records (lines) of a cfr</p>
      * <p>into an in-memory table format mapping a configuration</p>
@@ -25,7 +27,7 @@ const  cfrParser = {
      * @param isTarget  if true, only extracts the Target (proposed) configuration
      * @return  list of array of String (table) mapping the configuration, {@code null} if cfr validation fails
      */
-    parseCfr(listOfLines, isCheckSum, isInstalled, isTarget){
+function parseCfr(listOfLines, isCheckSum, isInstalled, isTarget){
         // reset global variables
         m_mapOfRecords = new Map();
         m_mapOfReferences = new Map();
@@ -41,11 +43,11 @@ const  cfrParser = {
 
         for (let k in listOfLines) {
             let sRecord = listOfLines[k];
-            switch (this.getElement(sRecord, 1, 2)) {
+            switch (getElement(sRecord, 1, 2)) {
                 case "00":
                     // header
-                    this.parseRecord00(sRecord);
-                    if (!this.containsKey(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER))
+                    parseRecord00(sRecord);
+                    if (!containsKey(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER))
                         return null;
                     break;
                 case "06":
@@ -53,76 +55,76 @@ const  cfrParser = {
                 case "07":
                     // logical system
                     isDetails = false;
-                    this.parseRecord07(sRecord);
+                    parseRecord07(sRecord);
                     break;
                 case "01":
                     // section separator for [base / proposed] order
-                    isDetails = this.parseRecord01(sRecord, isInstalled, isTarget);
+                    isDetails = parseRecord01(sRecord, isInstalled, isTarget);
                     break;
                 case "08":
                     // HW
                     if (!(isInstalled || isTarget))
-                        this.parseRecord08(sRecord);
+                        parseRecord08(sRecord);
                     break;
                 case "19":
                     // HW MES
                     if (!(isInstalled || isTarget))
-                        this.parseRecord19(sRecord);
+                        parseRecord19(sRecord);
                     break;
                 case "25":
                     // HW BASE
                     if (isInstalled)
-                        this.parseRecord08(sRecord);
+                        parseRecord08(sRecord);
                     break;
                 case "26":
                     // HW PROPOSED
                     if (isTarget)
-                        this.parseRecord08(sRecord);
+                        parseRecord08(sRecord);
                     break;
                 case "38":
                     // services
                     if (!(isInstalled || isTarget))
-                        this.parseRecord38(sRecord);
+                        parseRecord38(sRecord);
                     break;
                 case "47":
                     // SW
                     if (!(isInstalled || isTarget))
-                        this.parseRecord47(sRecord);
+                        parseRecord47(sRecord);
                     break;
                 case "48":
                     // SW PROPOSED
                     if (isTarget)
-                        this.parseRecord47(sRecord);
+                        parseRecord47(sRecord);
                     break;
                 case "49":
                     // SW BASE
                     if (isInstalled)
-                        this.parseRecord47(sRecord);
+                        parseRecord47(sRecord);
                     break;
                 case "50":
                     // SW MES
                     if (!(isInstalled || isTarget))
-                        this.parseRecord50(sRecord);
+                        parseRecord50(sRecord);
                     break;
                 case "95":
                     if (isDetails) {
-                        this.parseRecord95(sRecord);
+                        parseRecord95(sRecord);
                     }
                     break;
                 case "96":
                     if (isDetails) {
-                        this.parseRecord96(sRecord);
+                        parseRecord96(sRecord);
                     }
                     break;
                 case "98":
                     if (isCheckSum) {
-                        if (!this.parseRecord98(sRecord, iRecordCount))
+                        if (!parseRecord98(sRecord, iRecordCount))
                             return null;
                     }
                     break;
                 case "99":
                     if (isCheckSum) {
-                        if (!this.parseRecord99(sRecord, lCheckSum))
+                        if (!parseRecord99(sRecord, lCheckSum))
                             return null;
                     }
                     isEOF = true;
@@ -133,12 +135,53 @@ const  cfrParser = {
             }
             iRecordCount++;
             if (isCheckSum)
-                lCheckSum = this.computeChecksum(sRecord, lCheckSum);
+                lCheckSum = computeChecksum(sRecord, lCheckSum);
             if (isEOF)
                 break;
         }
-    },
-    getElement(sRecord, iBegin, iEnd) {
+        let listOfRecords = [];
+        listOfRecords.push(CfrConstants.CfrConstants.CSV_CFR);
+        listOfRecords.push(getValue(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER));
+        //int iLastSys = m_mapOfReferences.get(_CFR_SYSTEM);
+        let sSysCount = "1";
+        listOfRecords.push(CfrConstants.CfrConstants.CSV_SYSTEM);
+        listOfRecords.push(getValue(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_SYSTEM + sSysCount));
+        listOfRecords.push(CfrConstants.CfrConstants.CSV_LINE);
+        let iLastLine = 0;
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLastLine = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        }
+        for (let l = 1000; l <= iLastLine; l = l + 1000) {
+            let arLine = getValue(m_mapOfRecords,l.toString());
+            if (arLine == null)
+                continue;
+            let sSystem = arLine[CfrConstants.CfrConstants.LINE_SYSTEM];
+            if ((sSystem != null) && (sSystem != sSysCount)) {
+                sSysCount = sSystem;
+                listOfRecords.push(CfrConstants.CfrConstants.CSV_SYSTEM);
+                listOfRecords.push(getValue(m_mapOfRecords,CfrConstants.TABLE_SYSTEM + sSysCount));
+                listOfRecords.push(CfrConstants.CfrConstants.CSV_LINE);
+            }
+            listOfRecords.push(arLine);
+            let iLastSubLine = 0;
+            if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + l.toString())) {
+                iLastSubLine = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + l.toString());
+                for (let s = l + 1; s <= iLastSubLine; s++) {
+                    let arSubLine = getValue(m_mapOfRecords,s.toString());
+                    if (arSubLine == null)
+                        continue;
+                    listOfRecords.push(arSubLine);
+                }
+            }
+
+        }
+
+        m_mapOfRecords = null;
+        m_mapOfReferences = null;
+
+        return listOfRecords;
+    };
+function  getElement(sRecord, iBegin, iEnd) {
         let sValue = null;
         try {
             if ((iBegin > 0) && (sRecord != null) && (sRecord.length >= iEnd)) {
@@ -149,26 +192,26 @@ const  cfrParser = {
         if (sValue == null)
             sValue = "";
         return sValue;
-    },
-    formatDate(sYYYYMMDD) {
+    };
+function  formatDate(sYYYYMMDD) {
         let sDate = sYYYYMMDD;
         if ((sYYYYMMDD != null) && (sYYYYMMDD.length > 7)) {
             sDate = sYYYYMMDD.substring(0, 4) + "-" + sYYYYMMDD.substring(4, 6) + "-" + sYYYYMMDD.substring(6, 8);
         }
         return sDate;
-    },
-    parseRecord00(sRecord) {
+    };
+function parseRecord00(sRecord) {
         let arRecords = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
-        let sValue = this.getElement(sRecord, 3, 4);
+        let sValue = getElement(sRecord, 3, 4);
         // only V31. V30 or V41 aren't expected
         if (sValue != "31") {
             m_sError = "Version " + sValue + " isn't supported.";
             return false;
         }
 
-        arRecords[CfrConstants.CfrConstants.CFR_DATE] = this.formatDate(this.getElement(sRecord, 5, 12));
+        arRecords[CfrConstants.CfrConstants.CFR_DATE] = formatDate(getElement(sRecord, 5, 12));
 
-        switch (this.getElement(sRecord, 13, 14)) {
+        switch (getElement(sRecord, 13, 14)) {
             case "EC":
                 arRecords[CfrConstants.CfrConstants.CFR_APPNAME] = "e-Config";
                 break;
@@ -190,7 +233,7 @@ const  cfrParser = {
         }
 
         if (arRecords[CfrConstants.CfrConstants.CFR_APPNAME] != null) {
-            switch (this.getElement(sRecord, 15, 15)) {
+            switch (getElement(sRecord, 15, 15)) {
                 case "M":
                     arRecords[CfrConstants.CfrConstants.CFR_APPNAME] += " Disconnected";
                     break;
@@ -205,10 +248,10 @@ const  cfrParser = {
             }
         }
         if (arRecords[CfrConstants.CfrConstants.CFR_APPNAME] != null) {
-            arRecords[CfrConstants.CfrConstants.CFR_APPNAME] += " (" + this.getElement(sRecord, 21, 32) + ")";
+            arRecords[CfrConstants.CfrConstants.CFR_APPNAME] += " (" + getElement(sRecord, 21, 32) + ")";
         }
 
-        switch (this.getElement(sRecord, 16, 20)) {
+        switch (getElement(sRecord, 16, 20)) {
             case "PWR":
                 arRecords[CfrConstants.CfrConstants.CFR_BRAND] = "POWER";
                 break;
@@ -240,7 +283,7 @@ const  cfrParser = {
 
         arRecords[CfrConstants.CfrConstants.CFR_COUNTRY_IPS] = getElement(sRecord, 35, 37);
 
-        switch (this.getElement(sRecord, 39, 39)) {
+        switch (getElement(sRecord, 39, 39)) {
             case "":
             case "0":
                 arRecords[CfrConstants.CfrConstants.CFR_LOCKED] = "N";
@@ -250,7 +293,7 @@ const  cfrParser = {
                 break;
         }
 
-        switch (this.getElement(sRecord, 41, 41)) {
+        switch (getElement(sRecord, 41, 41)) {
             case "1":
                 arRecords[CfrConstants.CfrConstants.CFR_TYPE] = "HW";
                 break;
@@ -264,23 +307,23 @@ const  cfrParser = {
                 break;
         }
 
-        arRecords[CfrConstants.CfrConstants.CFR_DESCRIPTION] = this.getElement(sRecord, 42, 81);
-        arRecords[CfrConstants.CfrConstants.CFR_EXP_DATE] = this.formatDate(getElement(sRecord, 94, 101));
-        arRecords[CfrConstants.CfrConstants.CFR_COUNTRY] = this.getElement(sRecord, 141, 142);
-        arRecords[CfrConstants.CfrConstants.CFR_LANGUAGE] = this.getElement(sRecord, 143, 144);
+        arRecords[CfrConstants.CfrConstants.CFR_DESCRIPTION] = getElement(sRecord, 42, 81);
+        arRecords[CfrConstants.CfrConstants.CFR_EXP_DATE] = formatDate(getElement(sRecord, 94, 101));
+        arRecords[CfrConstants.CfrConstants.CFR_COUNTRY] = getElement(sRecord, 141, 142);
+        arRecords[CfrConstants.CfrConstants.CFR_LANGUAGE] = getElement(sRecord, 143, 144);
 
         m_mapOfRecords.set(CfrConstants.CfrConstants.TABLE_HEADER, arRecords);
-    },
-    parseRecord08(sRecord) {
+    };
+function parseRecord08(sRecord) {
         //same structure as Record 25 - Hardware Installed
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
 
         let iLineNbr = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLineNbr = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLineNbr = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
         }
         iLineNbr = iLineNbr + 1000;
 
@@ -292,10 +335,10 @@ const  cfrParser = {
         arRecords[CfrConstants.CfrConstants.LINE_PRODUCT_TYPE] = CfrConstants.CfrConstants.LINE_PRODUCT_TYPE_HARDWARE;
         // arRecords[_LINE_GROUPID] = String.valueOf(iLineNbr);
         arRecords[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.LINE_TYPE_NEW;
-        arRecords[CfrConstants.CfrConstants.LINE_MTM] = this.getElement(sRecord, 3, 6) + "-" + this.getElement(sRecord, 8, 10);
-        arRecords[CfrConstants.CfrConstants.LINE_QTY] = this.getElement(sRecord, 11, 15);
+        arRecords[CfrConstants.CfrConstants.LINE_MTM] = getElement(sRecord, 3, 6) + "-" + getElement(sRecord, 8, 10);
+        arRecords[CfrConstants.CfrConstants.LINE_QTY] = getElement(sRecord, 11, 15);
 
-        m_mapOfReferences = this.remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
+        m_mapOfReferences = remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE, iLineNbr);
         m_mapOfRecords.set(iLineNbr.toString(), arRecords);
 
@@ -304,25 +347,25 @@ const  cfrParser = {
             let arSubLine = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
             iSubLineNbr++;
             arSubLine[CfrConstants.CfrConstants.LINE_NO] = (iLineNbr + iSubLineNbr).toString();
-            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6);
+            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6);
 
-            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = this.getElement(sRecord, i + 7, i + 11);
+            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = getElement(sRecord, i + 7, i + 11);
 
             arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
             m_mapOfRecords.set((iLineNbr + iSubLineNbr).toString(), arSubLine);
         }
 
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE + iLineNbr.toString(), iLineNbr + iSubLineNbr);
-    },
-    parseRecord19(sRecord) {
+    };
+function parseRecord19(sRecord) {
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
 
         let iLineNbr = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLineNbr = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLineNbr = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
         }
         iLineNbr = iLineNbr + 1000;
 
@@ -333,15 +376,15 @@ const  cfrParser = {
         arRecords[CfrConstants.CfrConstants.LINE_NO] = iLineNbr.toString();
         arRecords[CfrConstants.CfrConstants.LINE_PRODUCT_TYPE] = CfrConstants.CfrConstants.LINE_PRODUCT_TYPE_HARDWARE;
         // arRecords[_LINE_GROUPID] = String.valueOf(iLineNbr);
-        arRecords[CfrConstants.CfrConstants.LINE_MTM] = this.getElement(sRecord, 3, 6) + "-" + this.getElement(sRecord, 7, 9);
+        arRecords[CfrConstants.CfrConstants.LINE_MTM] = getElement(sRecord, 3, 6) + "-" + getElement(sRecord, 7, 9);
         arRecords[CfrConstants.CfrConstants.LINE_QTY] = "1";
 
-        if (this.getElement(sRecord, 10, 13).length > 0) {
-            arRecords[CfrConstants.CfrConstants.LINE_MTM] = arRecords[CfrConstants.CfrConstants.LINE_MTM] + "_" + this.getElement(sRecord, 10, 13) + "-"
-                + this.getElement(sRecord, 14, 16);
+        if (getElement(sRecord, 10, 13).length > 0) {
+            arRecords[CfrConstants.CfrConstants.LINE_MTM] = arRecords[CfrConstants.CfrConstants.LINE_MTM] + "_" + getElement(sRecord, 10, 13) + "-"
+                + getElement(sRecord, 14, 16);
         }
 
-        switch (this.getElement(sRecord, 17, 17)) {
+        switch (getElement(sRecord, 17, 17)) {
             case "1":
                 arRecords[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.LINE_TYPE_NEW;
                 break;
@@ -375,7 +418,7 @@ const  cfrParser = {
             default:
                 break;
         }
-        m_mapOfReferences = this.remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
+        m_mapOfReferences = remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE, iLineNbr);
         m_mapOfRecords.set(iLineNbr.toString(), arRecords);
 
@@ -384,10 +427,10 @@ const  cfrParser = {
             let arSubLine = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
             iSubLineNbr++;
             arSubLine[CfrConstants.CfrConstants.LINE_NO] = (iLineNbr + iSubLineNbr).toString();
-            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6); // feature, RPQ or PartNumber
+            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6); // feature, RPQ or PartNumber
 
             let sQtySign = "";
-            switch (this.getElement(sRecord, i + 12, i + 12)) {
+            switch (getElement(sRecord, i + 12, i + 12)) {
                 case "1":
                     arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
                     break;
@@ -398,7 +441,7 @@ const  cfrParser = {
                 case "3": // from
                     //case "4": // to
                     arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_CONVERSION;
-                    arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6) + "_" + this.getElement(sRecord, i + 13, i + 19);
+                    arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6) + "_" + getElement(sRecord, i + 13, i + 19);
                     i = i + 13;
                     break;
                 case "6":
@@ -412,36 +455,36 @@ const  cfrParser = {
                     break;
             }
 
-            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + this.getElement(sRecord, i + 7, i + 11);
+            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + getElement(sRecord, i + 7, i + 11);
 
             m_mapOfRecords.set((iLineNbr + iSubLineNbr).toString(), arSubLine);
         }
 
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE + iLineNbr.toString(), iLineNbr + iSubLineNbr);
-    },
-    parseRecord07(sRecord) {
+    };
+function parseRecord07(sRecord) {
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
         iSys++;
         let arRecords = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
         arRecords[CfrConstants.CfrConstants.SYS_SEQ] = CfrConstants.CfrConstants.TABLE_SYSTEM + " " + iSys.toString();
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_DESC] = this.getElement(sRecord, 6, 45);
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_TYPE] = this.getElement(sRecord, 54, 57);
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_MODEL] = this.getElement(sRecord, 58, 60);
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN] = this.getElement(sRecord, 61, 69);
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN] = this.removeZeroPadding(arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN]);
-        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SEO] = this.getElement(sRecord, 71, 77); //?
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_DESC] = getElement(sRecord, 6, 45);
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_TYPE] = getElement(sRecord, 54, 57);
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_MODEL] = getElement(sRecord, 58, 60);
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN] = getElement(sRecord, 61, 69);
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN] = removeZeroPadding(arRecords[CfrConstants.CfrConstants.SYS_MAIN_SN]);
+        arRecords[CfrConstants.CfrConstants.SYS_MAIN_SEO] = getElement(sRecord, 71, 77); //?
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_SYSTEM, iSys);
         m_mapOfRecords.set(CfrConstants.CfrConstants.TABLE_SYSTEM + iSys.toString(), arRecords);
-    },
-    parseRecord01(sRecord, isInstalled, isTarget) {
-        if (!this.containsKey(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER))
+    };
+function parseRecord01(sRecord, isInstalled, isTarget) {
+        if (!containsKey(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER))
             return false;
         let isOk = false;
-        let arRecords = this.getValue(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER);
-        switch (this.getElement(sRecord, 3, 3)) {
+        let arRecords = getValue(m_mapOfRecords,CfrConstants.CfrConstants.TABLE_HEADER);
+        switch (getElement(sRecord, 3, 3)) {
             case "1":
                 if (!(isInstalled || isTarget)) {
                     arRecords[CfrConstants.CfrConstants.CFR_CODE] = CfrConstants.CfrConstants.CFR_CODE_NEW;
@@ -470,16 +513,16 @@ const  cfrParser = {
                 break;
         }
         return isOk;
-    },
-    parseRecord38(sRecord) {
+    };
+function parseRecord38(sRecord) {
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
 
         let iLineNbr = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLineNbr = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLineNbr = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
         }
         iLineNbr = iLineNbr + 1000;
 
@@ -490,10 +533,10 @@ const  cfrParser = {
         arRecords[CfrConstants.CfrConstants.LINE_NO] = iLineNbr.toString();
         arRecords[CfrConstants.CfrConstants.LINE_PRODUCT_TYPE] = CfrConstants.CfrConstants.LINE_PRODUCT_TYPE_SERVICES;
         // arRecords[_LINE_GROUPID] = String.valueOf(iLineNbr);
-        arRecords[CfrConstants.CfrConstants.LINE_MTM] = this.getElement(sRecord, 3, 6) + "-" + this.getElement(sRecord, 7, 9);
+        arRecords[CfrConstants.CfrConstants.LINE_MTM] = getElement(sRecord, 3, 6) + "-" + getElement(sRecord, 7, 9);
 
         let sQtySign = "";
-        switch (this.getElement(sRecord, 10, 10)) {
+        switch (getElement(sRecord, 10, 10)) {
             case "1":
                 arRecords[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
                 break;
@@ -504,9 +547,9 @@ const  cfrParser = {
             default:
                 break;
         }
-        arRecords[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + this.getElement(sRecord, 11, 15);
+        arRecords[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + getElement(sRecord, 11, 15);
 
-        switch (this.getElement(sRecord, 16, 16)) {
+        switch (getElement(sRecord, 16, 16)) {
             case "1":
                 arRecords[CfrConstants.CfrConstants.LINE_PRODUCT_TYPE] = CfrConstants.CfrConstants.LINE_PRODUCT_TYPE_SERVICEPAC;
                 break;
@@ -523,7 +566,7 @@ const  cfrParser = {
                 break;
         }
 
-        m_mapOfReferences = this.remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
+        m_mapOfReferences = remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE, iLineNbr);
         m_mapOfRecords.set(iLineNbr.toString(), arRecords);
 
@@ -532,10 +575,10 @@ const  cfrParser = {
             let arSubLine = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
             iSubLineNbr++;
             arSubLine[CfrConstants.CfrConstants.LINE_NO] = (iLineNbr + iSubLineNbr).toString();
-            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6);
+            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6);
             sQtySign = "";
 
-            switch (this.getElement(sRecord, i + 12, i + 12)) {
+            switch (getElement(sRecord, i + 12, i + 12)) {
                 case "1":
                     arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
                     break;
@@ -546,22 +589,22 @@ const  cfrParser = {
                 default:
                     break;
             }
-            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + this.getElement(sRecord, i + 7, i + 11);
+            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + getElement(sRecord, i + 7, i + 11);
             m_mapOfRecords.set((iLineNbr + iSubLineNbr).toString(), arSubLine);
         }
 
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE + iLineNbr.toString(), iLineNbr + iSubLineNbr);
-    },
-    parseRecord47(sRecord) {
+    };
+function parseRecord47(sRecord) {
         //same structure as Record 49 - Software Installed Record
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
 
         let iLineNbr = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLineNbr = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLineNbr = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
         }
         iLineNbr = iLineNbr + 1000;
 
@@ -584,10 +627,10 @@ const  cfrParser = {
         // }
         // }
         arRecords[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.LINE_TYPE_NEW;
-        arRecords[CfrConstants.CfrConstants.LINE_MTM] = this.getElement(sRecord, 3, 6) + "-" + this.getElement(sRecord, 7, 9);
-        arRecords[CfrConstants.CfrConstants.LINE_QTY] = this.getElement(sRecord, 10, 14);
+        arRecords[CfrConstants.CfrConstants.LINE_MTM] = getElement(sRecord, 3, 6) + "-" + getElement(sRecord, 7, 9);
+        arRecords[CfrConstants.CfrConstants.LINE_QTY] = getElement(sRecord, 10, 14);
 
-        m_mapOfReferences = this.remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
+        m_mapOfReferences = remove(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE, iLineNbr);
         m_mapOfRecords.set(iLineNbr.toString(), arRecords);
 
@@ -596,9 +639,9 @@ const  cfrParser = {
             let arSubLine = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
             iSubLineNbr++;
             arSubLine[CfrConstants.CfrConstants.LINE_NO] = (iLineNbr + iSubLineNbr).toString();
-            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6);
+            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6);
 
-            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = this.getElement(sRecord, i + 7, i + 11);
+            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = getElement(sRecord, i + 7, i + 11);
 
             arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
             m_mapOfRecords.set((iLineNbr + iSubLineNbr).toString(), arSubLine);
@@ -606,16 +649,16 @@ const  cfrParser = {
 
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE + iLineNbr.toString(), iLineNbr + iSubLineNbr);
 
-    },
-    parseRecord50(sRecord) {
+    };
+function parseRecord50(sRecord) {
         let iSys = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
-            iSys = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM)) {
+            iSys = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_SYSTEM);
         }
 
         let iLineNbr = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLineNbr = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLineNbr = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
         }
         iLineNbr = iLineNbr + 1000;
 
@@ -626,10 +669,10 @@ const  cfrParser = {
         arRecords[CfrConstants.CfrConstants.LINE_NO] = iLineNbr.toString();
         arRecords[CfrConstants.CfrConstants.LINE_PRODUCT_TYPE] = CfrConstants.CfrConstants.LINE_PRODUCT_TYPE_SOFTWARE;
         // arRecords[_LINE_GROUPID] = String.valueOf(iLineNbr);
-        arRecords[CfrConstants.CfrConstants.LINE_MTM] = this.getElement(sRecord, 3, 6) + "-" + this.getElement(sRecord, 7, 9);
+        arRecords[CfrConstants.CfrConstants.LINE_MTM] = getElement(sRecord, 3, 6) + "-" + getElement(sRecord, 7, 9);
         arRecords[CfrConstants.CfrConstants.LINE_QTY] = "1";
 
-        switch (this.getElement(sRecord, 10, 10)) {
+        switch (getElement(sRecord, 10, 10)) {
             case "1":
                 arRecords[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.LINE_TYPE_NEW;
                 break;
@@ -661,7 +704,7 @@ const  cfrParser = {
                 break;
         }
 
-        m_mapOfReferences = this.remove(m_mapOfReferences,"96" + CfrConstants.TABLE_LINE);
+        m_mapOfReferences = remove(m_mapOfReferences,"96" + CfrConstants.TABLE_LINE);
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE, iLineNbr);
         m_mapOfRecords.set(iLineNbr.toString(), arRecords);
 
@@ -670,10 +713,10 @@ const  cfrParser = {
             let arSubLine = new Array(CfrConstants.CfrConstants.ARRAY_SIZE);
             iSubLineNbr++;
             arSubLine[CfrConstants.CfrConstants.LINE_NO] = (iLineNbr + iSubLineNbr).toString();
-            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6); // feature, RPQ or PartNumber
+            arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6); // feature, RPQ or PartNumber
 
             let sQtySign = "";
-            switch (this.getElement(sRecord, i + 12, i + 12)) {
+            switch (getElement(sRecord, i + 12, i + 12)) {
                 case "1":
                     arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_ADD;
                     break;
@@ -684,24 +727,24 @@ const  cfrParser = {
                 case "3": //from
                     //case "4": //to
                     arSubLine[CfrConstants.CfrConstants.LINE_TYPE] = CfrConstants.CfrConstants.SUBLINE_TYPE_CONVERSION;
-                    arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = this.getElement(sRecord, i, i + 6) + "_" + this.getElement(sRecord, i + 13, i + 19);
+                    arSubLine[CfrConstants.CfrConstants.LINE_FEATURE] = getElement(sRecord, i, i + 6) + "_" + getElement(sRecord, i + 13, i + 19);
                     i = i + 13;
                     break;
                 default:
                     break;
             }
-            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + this.getElement(sRecord, i + 7, i + 11);
+            arSubLine[CfrConstants.CfrConstants.LINE_QTY] = sQtySign + getElement(sRecord, i + 7, i + 11);
 
             m_mapOfRecords.set((iLineNbr + iSubLineNbr).toString(), arSubLine);
         }
 
         m_mapOfReferences.set(CfrConstants.CfrConstants.TABLE_LINE + iLineNbr.toString(), iLineNbr + iSubLineNbr);
 
-    },
-    parseRecord95(sRecord) {
+    };
+function parseRecord95(sRecord) {
         let arRecords = null;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            arRecords = this.getValue(m_mapOfRecords,this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE));
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            arRecords = getValue(m_mapOfRecords,getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE));
         }
         if (arRecords == null)
             return false;
@@ -709,97 +752,97 @@ const  cfrParser = {
         // in case of HW/MES, there are two 95 records (FROM + TO)
         if (arRecords[CfrConstants.CfrConstants.LINE_CPUSIU] == null) {
 
-            arRecords[CfrConstants.CfrConstants.LINE_FROMTYPE] = this.getElement(sRecord, 3, 6);
+            arRecords[CfrConstants.CfrConstants.LINE_FROMTYPE] = getElement(sRecord, 3, 6);
             if (arRecords[CfrConstants.CfrConstants.LINE_FROMTYPE].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_FROMTYPE] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_FROMMODEL] = this.getElement(sRecord, 7, 9);
+            arRecords[CfrConstants.CfrConstants.LINE_FROMMODEL] = getElement(sRecord, 7, 9);
             if (arRecords[CfrConstants.CfrConstants.LINE_FROMMODEL].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_FROMMODEL] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_FROMSN] = this.getElement(sRecord, 20, 28);
-            arRecords[CfrConstants.CfrConstants.LINE_FROMSN] = this.removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSN]);
+            arRecords[CfrConstants.CfrConstants.LINE_FROMSN] = getElement(sRecord, 20, 28);
+            arRecords[CfrConstants.CfrConstants.LINE_FROMSN] = removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSN]);
             if (arRecords[CfrConstants.CfrConstants.LINE_FROMSN].length == 0) { // || (arRecords[ConstantsCfr.LINE_FROMSN].equals("000000000"))) {
                 arRecords[CfrConstants.CfrConstants.LINE_FROMSN] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_PRICE] = this.getElement(sRecord, 49, 49);
+            arRecords[CfrConstants.CfrConstants.LINE_PRICE] = getElement(sRecord, 49, 49);
             if (arRecords[CfrConstants.CfrConstants.LINE_PRICE].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_PRICE] = "Y";
             }
-            if (this.getElement(sRecord, 50, 50) == "S") {
+            if (getElement(sRecord, 50, 50) == "S") {
                 // 50, 50 : system number flag: T: temporary, S: actual, blank: none
-                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE] = this.getElement(sRecord, 51, 54);
-                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE] = this.removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE]);
+                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE] = getElement(sRecord, 51, 54);
+                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE] = removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE]);
                 if (arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE].length == 0) {
                     arRecords[CfrConstants.CfrConstants.LINE_FROMSYSTYPE] = null;
                 }
-                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR] = this.getElement(sRecord, 55, 61);
+                arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR] = getElement(sRecord, 55, 61);
                 if ((arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR].length == 0)
                     || (arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR] == "NON-SIU")
                     || (arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR] == "NEW CPU")) {
                     arRecords[CfrConstants.CfrConstants.LINE_FROMSYSNBR] = null;
                 }
             }
-            arRecords[CfrConstants.CfrConstants.LINE_CPUSIU] = this.getElement(sRecord, 62, 62);
-            arRecords[CfrConstants.CfrConstants.LINE_CMR] = this.getElement(sRecord, 76, 82);
+            arRecords[CfrConstants.CfrConstants.LINE_CPUSIU] = getElement(sRecord, 62, 62);
+            arRecords[CfrConstants.CfrConstants.LINE_CMR] = getElement(sRecord, 76, 82);
             if (arRecords[CfrConstants.CfrConstants.LINE_CMR].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_CMR] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_CRAD] = this.formatDate(this.getElement(sRecord, 83, 90));
-            arRecords[CfrConstants.CfrConstants.LINE_INSTALLDATE] = this.formatDate(this.getElement(sRecord, 91, 98));
-            arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = this.getElement(sRecord, 143, sRecord.length);
+            arRecords[CfrConstants.CfrConstants.LINE_CRAD] = formatDate(getElement(sRecord, 83, 90));
+            arRecords[CfrConstants.CfrConstants.LINE_INSTALLDATE] = formatDate(getElement(sRecord, 91, 98));
+            arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = getElement(sRecord, 143, sRecord.length);
             if (arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = null;
             }
 
         } else {
-            arRecords[CfrConstants.CfrConstants.LINE_TOTYPE] = this.getElement(sRecord, 3, 6);
+            arRecords[CfrConstants.CfrConstants.LINE_TOTYPE] = getElement(sRecord, 3, 6);
             if (arRecords[CfrConstants.CfrConstants.LINE_TOTYPE].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_TOTYPE] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_TOMODEL] = this.getElement(sRecord, 7, 9);
+            arRecords[CfrConstants.CfrConstants.LINE_TOMODEL] = getElement(sRecord, 7, 9);
             if (arRecords[CfrConstants.CfrConstants.LINE_TOMODEL].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_TOMODEL] = null;
             }
-            arRecords[CfrConstants.CfrConstants.LINE_TOSN] = this.getElement(sRecord, 20, 28);
-            arRecords[CfrConstants.CfrConstants.LINE_TOSN] = this.removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSN]);
+            arRecords[CfrConstants.CfrConstants.LINE_TOSN] = getElement(sRecord, 20, 28);
+            arRecords[CfrConstants.CfrConstants.LINE_TOSN] = removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_FROMSN]);
             if (arRecords[CfrConstants.CfrConstants.LINE_TOSN].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_TOSN] = null;
             }
-            if (this.getElement(sRecord, 50, 50) == "S") {
-                arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE] = this.getElement(sRecord, 51, 54);
-                arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE] = this.removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE]);
+            if (getElement(sRecord, 50, 50) == "S") {
+                arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE] = getElement(sRecord, 51, 54);
+                arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE] = removeZeroPadding(arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE]);
                 if (arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE].length == 0) {
                     arRecords[CfrConstants.CfrConstants.LINE_TOSYSTYPE] = null;
                 }
-                arRecords[CfrConstants.CfrConstants.LINE_TOSYSNBR] = this.getElement(sRecord, 55, 61);
+                arRecords[CfrConstants.CfrConstants.LINE_TOSYSNBR] = getElement(sRecord, 55, 61);
                 if (arRecords[CfrConstants.CfrConstants.LINE_TOSYSNBR].length == 0) {
                     arRecords[CfrConstants.CfrConstants.LINE_TOSYSNBR] = null;
                 }
             }
 
-            arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = this.getElement(sRecord, 143, sRecord.length);
+            arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = getElement(sRecord, 143, sRecord.length);
             if (arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION].length == 0) {
                 arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = null;
             }
 
         }
-    },
-    parseRecord96(sRecord) {
+    };
+function parseRecord96(sRecord) {
         let iLastLine = 0;
         let iLastSubLine = 0;
-        if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
-            iLastLine = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
-            if (this.containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + iLastLine.toString())) {
-                iLastSubLine = this.getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + iLastLine.toString());
+        if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE)) {
+            iLastLine = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE);
+            if (containsKey(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + iLastLine.toString())) {
+                iLastSubLine = getValue(m_mapOfReferences,CfrConstants.CfrConstants.TABLE_LINE + iLastLine.toString());
             }
         }
         if (iLastSubLine == 0)
             return;
 
         let iSubLine = iLastLine + 1;
-        if (this.containsKey(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE)) {
-            iSubLine = this.getValue(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
+        if (containsKey(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE)) {
+            iSubLine = getValue(m_mapOfReferences,"96" + CfrConstants.CfrConstants.TABLE_LINE);
             iSubLine++;
         }
         m_mapOfReferences.set("96" + CfrConstants.CfrConstants.TABLE_LINE, iSubLine);
@@ -807,11 +850,11 @@ const  cfrParser = {
         if (iSubLine > iLastSubLine)
             return false;
 
-        let arRecords = this.getValue(m_mapOfRecords,iSubLine.toString());
+        let arRecords = getValue(m_mapOfRecords,iSubLine.toString());
         if (arRecords == null)
             return false;
 
-        let sFeature = this.getElement(sRecord, 3, 9);
+        let sFeature = getElement(sRecord, 3, 9);
         if ((arRecords[CfrConstants.CfrConstants.LINE_FEATURE] == null) || (sFeature != arRecords[CfrConstants.CfrConstants.LINE_FEATURE])) {
             if ((arRecords[CfrConstants.CfrConstants.LINE_TYPE] == null) || (arRecords[CfrConstants.CfrConstants.LINE_TYPE] != CfrConstants.CfrConstants.SUBLINE_TYPE_CONVERSION)) {
                 return false;
@@ -827,37 +870,37 @@ const  cfrParser = {
             }
         }
 
-        arRecords[CfrConstants.CfrConstants.LINE_PRICE] = this.getElement(sRecord, 29, 29);
+        arRecords[CfrConstants.CfrConstants.LINE_PRICE] = getElement(sRecord, 29, 29);
         if (arRecords[CfrConstants.CfrConstants.LINE_PRICE].length == 0) {
             arRecords[CfrConstants.CfrConstants.LINE_PRICE] = "Y";
         }
-        arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = this.getElement(sRecord, 51, sRecord.length);
+        arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = getElement(sRecord, 51, sRecord.length);
         if (arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION].length == 0) {
             arRecords[CfrConstants.CfrConstants.LINE_DESCRIPTION] = null;
         }
 
-    },
-    parseRecord98(sRecord, iRecordCount) {
+    };
+function parseRecord98(sRecord, iRecordCount) {
         let sCount = (iRecordCount + 1).toString();
-        let s98 = this.getElement(sRecord, 3, 7);
+        let s98 = getElement(sRecord, 3, 7);
         if (s98 != sCount) {
             m_sError = "Line count " + sCount + " isn't the same as the one in cfr (" + s98 + ")";
             return false;
         }
         return true;
-    },
-    parseRecord99(sRecord,lCheckSum) {
-        let sCheck = this.computeChecksum(null, lCheckSum).toString();
+    };
+function parseRecord99(sRecord,lCheckSum) {
+        let sCheck = computeChecksum(null, lCheckSum).toString();
         if (sCheck == null)
             return false;
-        let s99 = this.getElement(sRecord, 3, 12);
+        let s99 = getElement(sRecord, 3, 12);
         if (s99 != sCheck) {
             m_sError = "Checksum is incorrect";
             return false;
         }
         return true;
-    },
-    computeChecksum(sRecord, lCheckSum) {
+    };
+function computeChecksum(sRecord, lCheckSum) {
 
         if (sRecord == null) {
             let result;
@@ -914,8 +957,8 @@ const  cfrParser = {
             }
         }
         return lCheckSum;
-    },
-    containsKey (map,key){
+    };
+function containsKey (map,key){
         if (map == null || map == undefined)
             return false;
 
@@ -925,8 +968,18 @@ const  cfrParser = {
                 return true;
         }
         return false
-    },
-    getValue(map,key){
+    };
+/**
+ * 生成指定长度的0 例如：0000000000000
+ * @param num
+ * @param length
+ * @returns {string}
+ * @constructor
+ */
+function prefixInteger(num, length) {
+    return (Array(length).join('0') + num).slice(-length);
+}
+function getValue(map,key){
         if (map == null || key == null || key == '' || key == undefined)
             return null;
         let mapObj= Array.from(map);
@@ -936,8 +989,8 @@ const  cfrParser = {
             }
         }
         return null;
-    },
-    removeZeroPadding(sText){
+    };
+function removeZeroPadding(sText){
         if (sText == null) return "";
         let z = 0;
         while (z < sText.length) {
@@ -950,8 +1003,8 @@ const  cfrParser = {
             sText = sText.substring(z);
         }
         return sText;
-    },
-    remove(map,key){
+};
+function remove(map,key){
         let mapObj= Array.from(map);
         for (let k in mapObj) {
             if (mapObj[k][0] == key){
@@ -959,7 +1012,6 @@ const  cfrParser = {
             }
         }
         return new Map(mapObj);
-    }
 }
 
 export default {

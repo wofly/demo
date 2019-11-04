@@ -16,6 +16,8 @@ import store from './store/index';
 // 升级脚本
 import './utils/upgrade';
 
+import axios from 'axios';
+import qs from 'qs';
 Vue.use(VueI18n); // 使用国际化全局挂载
 Vue.use(VueRouter);
 Vue.use(ElementUI);
@@ -36,7 +38,9 @@ const router = new VueRouter({
 });
 
 Vue.prototype.$db = db;
-
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+Vue.prototype.$axios = axios;
+Vue.prototype.$qs = qs;
 Vue.prototype.$logger = logger;
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));

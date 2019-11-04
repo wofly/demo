@@ -11,6 +11,17 @@ const CfrConstants = {
                 "COUNTRY CODE", "COUNTRY", "LANGUAGE", "LOCKED", "EXPIRATION DATE", "CODE", "", "", "", "", "", "", "", "",
                 "", "", "" ],
     /**
+     * System description row
+     */
+    CSV_SYSTEM : [ "SYSTEM SEQ", "SYSTEM DESC", "SYSTEM TYPE", "SYSTEM MODEL", "SYSTEM SN",
+        "SYSTEM SEO", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" ],
+    /**
+     * Line (MTM) and subline (Feature) description row
+     */
+    CSV_LINE : [ "LINE NO", "MTM", "FEATURE", "DESCRIPTION", "QUANTITY", "TYPE", "PRODUCT",
+        "SYSTEM", "CPUSIU", "CHARGEABLE", "CRAD", "FROM TYPE", "FROM MODEL", "FROM SN", "FROM SYSTEM TYPE",
+        "FROM SYSTEM NO", "INSTALL DATE", "CUSTNO", "TO TYPE", "TO MODEL", "TO SN", "TO SYSTEM TYPE", "TO SYSTEM NO" ],
+    /**
      * Identifies the column indices in HEADER row for the CFR action code like new order or MES
      */
     CFR_CODE : 10,
@@ -181,6 +192,10 @@ const CfrConstants = {
      * Identifies the column indices in HEADER row for the CFR application which created the CFR, and the configurator version, release and model number
      */
     CFR_APPNAME : 1,
+    /**
+     * Identifies the column indices in HEADER row for the CFR main brand
+     */
+    CFR_BRAND : 2,
     /**
      * Geo Asia Pacific: AP
      */

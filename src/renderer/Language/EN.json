@@ -15,11 +15,62 @@
 	"Updates": "Updates",
 	"AboutUs": "About Us"
   },
+  "productSelect": {
+    "title": "ProductSelect",
+    "button": "Back"
+  },
+  "ChooseTemplate": {
+    "title": "ChooseTemplate",
+    "button": "Back",
+    "lists": {
+      "InitialConfiguration": "InitialConfiguration",
+      "RecommendedConfiguration": "RecommendedConfiguration"
+    }
+  },
+  "newProgram":{
+	"newProgram":"newProgram",
+	"ImportPlan":"Import Plan"
+  },
+  "Login":{
+	"Login":"Login",
+	"register":"Register",
+	"Account":" Account",
+	"Password":" Password",
+	"lists":{
+		"mailbox":"mailbox",
+		"EmailVerificationCode":"Email verification code",
+		"Password":"Password",
+		"confirmPassword":"confirmPassword",
+		"Name":"Name",
+		"MobilePhone":"MobilePhone",
+		"Company":"Company",
+		"Department": "Department",
+		"Position":"Position",
+		"button":["Cancel","Register"]
+	}
+  },
+  "Setting":{
+	"title":"Setting",
+	"Language":"Language",
+	"Currency":"Currency Type",
+	"addedValueTax":"Added-value tax",
+	"ServiceTax":"Service tax",
+	"DisplayDiscontinuedComponent":"Show discontinuation",
+	"buttons":{
+		"cancel":"Cancel",
+		"confirm":"Confirm"
+	}
+  },
+  "ConfigureHardware": {
+    "title": "Configure Hardware",
+    "buttonLast": "Last Step",
+    "buttonNext": "Next Step"
+  },
   "details": {
 	"abstract":{
-		"customername": "Customername",
-		"projectname": "Projectname",
-		"scenarioname":"Scenarioname",
+		"customername": "CustomerName",
+		"projectname": "ProjectName",
+		"scenarioname":"ScenarioName",
 		"salesmanager":"Salesmanager",
 		"deliverydate":"Deliverydate",
 		"salesbeforeManager":"SalesBeforeManager",
@@ -40,14 +91,14 @@
 		"machineConfiguration": "MachineConfiguration"
 	},
 	"detailList": {
-		"serialNumber": "SerialNumber",
+		"serialNumber": "Index",
 		"productName": "ProductName",
 		"remarks": "Remarks",
 		"quantity": "Quantity",
 		"ListPrice": "ListPrice",
 		"discount": "Discount",
-		"salesPriceNoTax": "SalesPrice（NoTax）",
-		"salesPricePlusDuty": "SalesPrice（PlusDuty）"
+		"salesPriceNoTax": "Untaxed price",
+		"salesPricePlusDuty": "After tax price"
 	},
 	"machine": {
 		"hardware": "Hardware",
@@ -90,5 +141,222 @@
 				"content3":"total capacity"
 			}
 		}
+	},
+  "InternalPCIE": {
+    "lists": {
+      "InternalPCIEsetup": {
+        "title": "Config Internal PCIE",
+        "content1": "Add Card",
+        "content2": "Slot Be Used Already ",
+        "tips": "Prompt message"
+      }
+    }
+  },
+  "backPlane": {
+    "prepositionBackPlane": {
+      "title": "BackPlane"
+    },
+    "prepositionInternalDisk": {
+      "title": "Internal Disk",
+      "InternalDisk": {
+        "content1": "preposition",
+        "content2": "Add Harddisk",
+        "content3": "Slot already in use"
+      }
+    },
+    "infixBackPlane": {
+      "title": "BackPlane"
+    },
+    "infixInternalDisk": {
+      "title": "Internal Disk",
+      "content1": "Add Harddisk",
+      "content2": "Slot already in use"
+    }
+  },
+  "Power": {
+    "lists": {
+      "PowerSupply": {
+        "title": "PowerSupply",
+        "content1": "Add Power"
+      },
+      "PowerLine": {
+        "title": "PowerLine",
+        "content1": "Add PowerLine"
+      },
+      "Notice1": {
+        "title": "Notice",
+        "content1": "total Accessories TDP",
+        "content2": "Power total TDP"
+      },
+      "Notice2": {
+        "title": "Notice",
+        "content1": "Unified prompt message"
+      }
+    }
+  },
+  "Accessories": {
+    "lists": {
+      "Cable": {
+        "title": "Cable",
+        "content1": "Add Cable"
+      },
+      "GuideRail": {
+        "title": "GuideRail",
+        "content1": "Add Guide Rail"
+      },
+      "PanelStyle": {
+        "title": "PanelStyle"
+      },
+      "language": {
+        "title": "BASIClanguage"
+      },
+      "rests": {
+        "title": "Rests",
+        "content1": "Add Accessories"
+      }
+    }
+  },
+  "ConfigureSoftware":{
+	"title":"ConfigureSoftware",
+    "buttonLast": "Last Step",
+    "buttonNext": "Next Step"
+  },
+  "Software":{
+	"LogicalPartition":{
+		"title":"LogicalPartition"
+	},
+	"OperatingSystem":{
+		"title":"OperatingSystem"
+	},
+	"Application":{
+		"title":"Application"
+	},
+	"details":{
+		"list":{
+			"serialNumber":"Index",
+			"classify":"classify",
+			"describingAccessories":"describingAccessories",
+			"Quantity":"Quantity",
+			"price":"price"
+		},
+		"aggregate":"Aggregate",
+		"discount":"Discount",
+		"discountedPrice":"DiscountedPrice"
 	}
+  },
+  "LogicalPartition": {
+	"lists":{
+		"LogicalPartition":{
+			"title":"LogicalPartition",
+			"content1":"LogicalPartition"
+		},
+		"VirtualizationSoftware":{
+			"title": "virtualization software",
+			"content1":"The maintenance period"
+		}
+	}
+  },
+  "OperatingSystem":{
+	"lists":{
+		"MainOperatingSystem":{
+			"title":"MainOperatingSystem",
+			"content1":"The number of cores that have been activated",
+			"content2":"The maintenance period"
+		},
+		"MinorOperatingSystem":{
+			"title":"MinorOperatingSystem",
+			"content1":["The number of cores that have been activated","The maintenance period"],
+			"content2":["The number of cores that have been activated","The maintenance period"]
+		}
+	}
+  },
+  "Application":{
+	"lists":{
+		"SelectApplication":{
+			"title":"SelectApplication",
+			"content1":"The maintenance period",
+			"content2":"The maintenance period"
+		}
+	}
+  },
+  "CompleteTheConfiguration":{
+	"title":"CompleteTheConfiguration",
+	"btnAccomplish":"Accomplish",
+	"btnLastStep":"LastStep",
+	"lists":{
+		"hardware":{
+			"title":"Hardware",
+			"list":{
+				"serialNumber":"Index",
+				"classify":"classify",
+				"describingAccessories":"describingAccessories",
+				"amount":"amount"
+			}
+		},
+		"software":{
+			"title":"Software",
+			"list":{
+				"serialNumber":"Index",
+				"classify":"classify",
+				"describingAccessories":"describingAccessories",
+				"amount":"amount",
+				"TotalPrice":"Price"
+			}
+		}
+	}
+  },
+  "Proback":{
+	"machinetitle":"machine",
+	"inventory":"inventory",
+	"back":"Back",
+	"hardware":{
+		"title":"Hardware",
+		"list":{
+			"TotalPrice":"TotalPrice",
+			"Discount":"Discount",
+			"DiscountedPrice":"DiscountedPrice"
+		}
+	},
+	"software":{
+		"title":"Software",
+		"list":{
+			"TotalPrice":"TotalPrice",
+			"Discount":"Discount",
+			"DiscountedPrice":"DiscountedPrice"
+		}
+	},
+	"machinename":{
+		"title":"machine",
+		"list":{
+			"TotalPrice":"TotalPrice",
+			"Discount":"Discount",
+			"DiscountedPrice":"DiscountedPrice"
+		}
+	},
+	"aggregate":{
+		"TotalMachinePrice":"TotalMachinePrice",
+		"quantity":"Quantity",
+		"discountedprice":"DiscountedPrice"
+	},
+	"list":{
+		"serialNumber":"Index",
+		"classify":"classify",
+		"describingAccessories":"describingAccessories",
+		"amount":"amount"
+	}
+  },
+  "EditScheme":{
+		"title":"EditScheme",
+		"save":"save",
+		"back":"back",
+		"abstract":{
+			"customername": "CustomerName",
+			"projectname": "ProjectName",
+			"scenarioname":"ScenarioName",
+			"salesmanager":"Salesmanager",
+			"deliverydate":"Deliverydate",
+			"salesbeforeManager":"SalesBeforeManager",
+			"postscript":"Postscript"
+		}
+  }
 }

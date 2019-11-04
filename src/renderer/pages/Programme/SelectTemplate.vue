@@ -1,15 +1,16 @@
 <template>
+    <!--选择模板-->
     <div>
         <div class="g-common-table">
             <div class="g-table-top">
-                <span class=" g-title-text">选择模板</span>
+                <span class=" g-title-text">{{$t('ChooseTemplate.title')}}</span>
                 <div class="g-table-btn-group ">
-                    <el-button size="small" type="primary" @click="reload">返 回</el-button>
+                    <el-button size="small" type="primary" @click="reload">{{$t('ChooseTemplate.button')}}</el-button>
                 </div>
             </div>
         </div>
         <div class="product-introduction">
-            <span class="title">初始配置</span>
+            <span class="title">{{$t('ChooseTemplate.lists.InitialConfiguration')}}</span>
             <div class="introduction-content">
                 <el-row :gutter="30">
                     <el-col :span="8" class="config" >
@@ -24,7 +25,7 @@
             </div>
         </div>
         <div class="product-introduction">
-            <span class="title">推荐配置</span>
+            <span class="title">{{$t('ChooseTemplate.lists.RecommendedConfiguration')}}</span>
             <div class="introduction-content">
                 <el-row :gutter="30">
                     <el-col :span="8" class="config" v-for="(item,index) in templateData" :key="index">
@@ -97,7 +98,8 @@
                                     console.log(localStorage.machineId)
                                     /* 查询 product_programme_detail 表中数据*/
                                     const SQLdata = `SELECT * FROM product_programme_detail  WHERE product_id = 1
-                                    AND solution_id ='${localStorage.solutionId}' AND template_id = '${value}' AND machine_id = '${localStorage.machineId}' `;
+                                    AND solution_id ='${localStorage.solutionId}' AND template_id = '${value}' AND machine_id = '${localStorage.machineId}'
+                                     and is_expansion=1`;
                                     console.log(SQLdata)
                                     this.$db.all(SQLdata, (err, res) => {
                                         if (err) {
@@ -109,9 +111,8 @@
                                         } else {
                                             if (res.length == 0) {
                                                 /* 往列表 硬件 和软件 列表清单里插入数据*/
-                                                const SQL = `INSERT INTO product_programme_detail(component_id,product_id,categroy_id,component_id,component_count,template_id,solution_id,machine_id)
- SELECT product_templete.component_id,product_templete.product_id,product_templete.categroy_id,product_templete.component_id,product_templete.component_count,product_templete.template_id,'${localStorage.solutionId}','${localStorage.machineId}'  from product_templete where template_id='${value}'`;
-                                                console.log(SQL);
+                                                const SQL = `INSERT INTO product_programme_detail(component_id,product_id,categroy_id,component_id,component_count,template_id,solution_id,machine_id,is_expansion)
+ SELECT product_templete.component_id,product_templete.product_id,product_templete.categroy_id,product_templete.component_id,product_templete.component_count,product_templete.template_id,'${localStorage.solutionId}','${localStorage.machineId}','1'  from product_templete where template_id='${value}' and is_expansion=1`;
                                                 this.$db.all(SQL, (err, res) => {
                                                     if (err) {
                                                         this.$logger(err);
@@ -120,6 +121,7 @@
                                                             desc: err,
                                                         });
                                                     }
+                                                    console.log(SQL,res);
                                                 })
                                                 this.getbarebone();
                                             }
@@ -141,7 +143,7 @@
 
             /*获取 barebone id*/
             getbarebone() {
-                const SQL = `SELECT  * FROM product_programme_detail WHERE product_id = 1 AND categroy_id = 16 AND solution_id = '${localStorage.solutionId}' AND template_id ='${localStorage.templateId}' AND machine_id ='${localStorage.machineId}'`;
+                const SQL = `SELECT  * FROM product_programme_detail WHERE product_id = 1 AND categroy_id = 16 AND solution_id = '${localStorage.solutionId}' AND template_id ='${localStorage.templateId}' AND machine_id ='${localStorage.machineId}'and is_expansion=1`;
                 this.$db.all(SQL, (err, res) => {
                     if (err) {
                         this.$logger(err);

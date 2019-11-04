@@ -1,4 +1,5 @@
 <template>
+    <!--欢迎使用的页面、页面，默认展示的-->
     <div class="login">
         <h2>{{ $t('index.Title')}}!</h2>
         <div class="nosan">

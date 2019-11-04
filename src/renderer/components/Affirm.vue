@@ -2,45 +2,45 @@
     <div class="affirm">
         <!--确认组件-->
         <header>
-            <b>确认配置</b>
-            <el-button type="primary" size="mini" @click="getElen()">完成<i
+            <b>{{$t('CompleteTheConfiguration.title')}}</b>
+            <el-button type="primary" size="mini" @click="getElen()">{{$t('CompleteTheConfiguration.btnAccomplish')}}<i
                     class="el-icon-arrow-right el-icon--right"></i></el-button>
-            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">上一步</el-button>
+            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">{{$t('CompleteTheConfiguration.btnLastStep')}}</el-button>
         </header>
         <div class="affs">
-            硬件
+          {{$t('CompleteTheConfiguration.lists.hardware.title')}}
         </div>
         <el-table :data="affirmTable" class="component-line">
             <el-table-column align="center" type="index" :index="indexMethod"
-                             label="序号" width="80">
+                             :label="$t('CompleteTheConfiguration.lists.hardware.list.serialNumber')" width="80">
             </el-table-column>
             <el-table-column align="center" prop="component_id" label="PN" width="180">
             </el-table-column>
             <el-table-column align="center" prop="template_name" label="FC" width="110">
             </el-table-column>
-            <el-table-column align="center" prop="name" label="分类" width="110">
+            <el-table-column align="center" prop="name" :label="$t('CompleteTheConfiguration.lists.hardware.list.classify')" width="110">
             </el-table-column>
-            <el-table-column align="center" prop="template_desc" label="配件描述">
+            <el-table-column align="center" prop="template_desc" :label="$t('CompleteTheConfiguration.lists.hardware.list.describingAccessories')">
             </el-table-column>
-            <el-table-column align="center" prop="component_count" label="数量" width="100">
+            <el-table-column align="center" prop="component_count" :label="$t('CompleteTheConfiguration.lists.hardware.list.amount')" width="100">
             </el-table-column>
         </el-table>
         <div class="affs">
-            软件
+          {{$t('CompleteTheConfiguration.lists.software.title')}}
         </div>
         <el-table :data="addirmTable" class="component-line">
             <el-table-column align="center" type="index" :index="indexMethod"
-                             label="序号" width="80">
+                             :label="$t('CompleteTheConfiguration.lists.hardware.list.serialNumber')" width="80">
             </el-table-column>
             <el-table-column align="center" prop="component_id" label="PN" width="180">
             </el-table-column>
             <el-table-column align="center" prop="template_name" label="FC" width="110">
             </el-table-column>
-            <el-table-column align="center" prop="name" label="分类" width="110">
+            <el-table-column align="center" prop="name" :label="$t('CompleteTheConfiguration.lists.hardware.list.classify')" width="110">
             </el-table-column>
-            <el-table-column align="center" prop="template_desc" label="配件描述">
+            <el-table-column align="center" prop="template_desc" :label="$t('CompleteTheConfiguration.lists.hardware.list.describingAccessories')">
             </el-table-column>
-            <el-table-column align="center" prop="component_count" label="数量" width="100">
+            <el-table-column align="center" prop="component_count" :label="$t('CompleteTheConfiguration.lists.hardware.list.amount')" width="100">
             </el-table-column>
         </el-table>
     </div>
@@ -273,7 +273,8 @@ export default {
 
     /* -----------返回上一页------------*/
     reload() {
-      this.$router.go(-1);
+        this.$router.push({path:'/Downen/Logic',query:{id:0}});
+      //this.$router.go(-1);
     },
     indexMethod(index) {
       return index + 1;
@@ -301,24 +302,7 @@ export default {
                    or  info.id=other.base_info_id
  where detail.categroy_id in (1,2,3,5,6,7,17) and so.id='${localStorage.solutionId}' and detail.template_id='${localStorage.templateId}'
  and product_id='${localStorage.productId}' and machine_id='${localStorage.machineId}'`;
-    const SQL = `select  distinct cs.id,cs.software_PN,cs.software_FC,ss.software_categroy,cs.software_des,ss.qty,cs.purchase from (
-         select * from component_software where id in (
-         select  carry_software_id from software_software where choice_software_id in (
-         select id from component_software where id in (
-         select component_id from product_programme_detail where categroy_id in (21,14,15)
-                                                  and product_id='${localStorage.productId}'
-                                                  and machine_id='${localStorage.machineId}'
-                                                  and solution_id='${localStorage.solutionId}'
-                                                  and template_id='${localStorage.templateId}'
-         )
-          )
-         ) and software_type !=3
-         ) cs left join software_software ss on ss.carry_software_id= cs.id
 
-union
-select distinct cs.id,cs.software_PN,cs.software_FC,cs.categroy_id,cs.software_des,cs.purchase,detail.component_count from (
-select *
-from component_software  where id in(select component_id from product_programme_detail where categroy_id in(18,19,20) and template_id='${localStorage.templateId}'and solution_id='${localStorage.solutionId}'and product_id='${localStorage.productId}' and machine_id='${localStorage.machineId}'))cs left join product_programme_detail detail on detail.component_id = cs.id `;
     this.$db.all(rowSQL, (err, res) => {
       console.log(res, err);
       if (err) {
@@ -339,6 +323,7 @@ from component_software  where id in(select component_id from product_programme_
             // total_price: item.listprice_onshore,
             categroy: item.categroy_id,
           };
+
           this.affirmTable.push(obj);
         });
       }
@@ -403,66 +388,243 @@ from component_software  where id in(select component_id from product_programme_
         return false;
       }
     });
-    this.$db.all(SQL, (err, res) => {
-      console.log(res, err);
-      if (err) {
-        this.$logger(err);
-        this.$Notice.error({
-          title: '搜索失败',
-          desc: err,
-        });
-      } else {
-        this.addirmTable = [];
-        const arr = [];
-        res.forEach((item, index) => {
-          const obj = {
-            component_count: item.qty,
-            template_desc: item.software_des,
-            name: item.software_categroy,
-            template_name: item.software_FC,
-            component_id: item.software_PN,
-          };
-          return arr.push(obj);
-        });
-        this.addirmTable = arr.filter(item => {
-          if (item.name == 0) {
-            item.name = '逻辑分区';
-            return true;
+
+      const SQL = `select  distinct cs.id,cs.software_PN,cs.software_FC,ss.software_categroy,cs.software_des,ss.qty,cs.purchase,cs.Classify,cs.categroy_id,
+                   (SELECT system_type FROM product_info WHERE id = ${localStorage.productId}) AS type,
+                   (SELECT system_model FROM product_info WHERE id = ${localStorage.productId}) AS model,
+                  (SELECT component_count FROM product_programme_detail WHERE categroy_id = 11
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as cpuActiveNum,
+            (SELECT component_count FROM product_programme_detail WHERE categroy_id = 13
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as logicNum
+            from (
+         select * from component_software where id in (
+         select  carry_software_id from software_software where choice_software_id in (
+         select id from component_software where id in (
+         select component_id from product_programme_detail where categroy_id in (21,14,15)
+                                                  and product_id='${localStorage.productId}'
+                                                  and machine_id='${localStorage.machineId}'
+                                                  and solution_id='${localStorage.solutionId}'
+                                                  and template_id='${localStorage.templateId}'
+         )
+          )
+         ) and software_type !=3
+         ) cs left join software_software ss on ss.carry_software_id= cs.id
+
+union
+select distinct cs.id,cs.software_PN,cs.software_FC,cs.categroy_id,cs.software_des,detail.component_count,cs.purchase ,cs.Classify,cs.categroy_id,
+             (SELECT system_type FROM product_info WHERE id = ${localStorage.productId}) AS type,
+                   (SELECT system_model FROM product_info WHERE id = ${localStorage.productId}) AS model,
+                  (SELECT component_count FROM product_programme_detail WHERE categroy_id = 11
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as cpuActiveNum,
+            (SELECT component_count FROM product_programme_detail WHERE categroy_id = 13
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as logicNum
+            from (
+select *
+from component_software  where id in(select component_id from product_programme_detail where categroy_id in(18,19,20) and template_id='${localStorage.templateId}'and solution_id='${localStorage.solutionId}'and product_id='${localStorage.productId}' and machine_id='${localStorage.machineId}'))cs left join product_programme_detail detail on detail.component_id = cs.id WHERE detail.machine_id = '${localStorage.machineId}'`;
+    //-----------------------------------软件----------------------------
+      //获取软件数据（维保信息除外）
+      const sqlSW =  `SELECT T1.software_categroy,cs.*,
+                   (SELECT system_type FROM product_info WHERE id = ${localStorage.productId}) AS type,
+                   (SELECT system_model FROM product_info WHERE id = ${localStorage.productId}) AS model,
+                  (SELECT component_count FROM product_programme_detail WHERE categroy_id = 11
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as cpuActiveNum,
+            (SELECT component_count FROM product_programme_detail WHERE categroy_id = 13
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as logicNum
+            FROM component_software cs
+            INNER JOIN
+            (SELECT
+            ss.carry_software_id,ss.software_categroy,ss.qty FROM product_programme_detail ppd
+            INNER JOIN software_software ss ON ppd.component_id = ss.choice_software_id
+            WHERE ppd.categroy_id IN (21,14,15) AND ppd.solution_id = ${localStorage.solutionId}
+            AND ppd.template_id = ${localStorage.templateId} AND ppd.machine_id = ${localStorage.machineId} AND ppd.product_id = ${localStorage.productId} ORDER BY   ss.carry_software_id
+            ) T1
+            ON T1.carry_software_id = cs.id
+            WHERE cs.software_type != 3
+            UNION
+            SELECT  ppd.categroy_id AS software_categroy,cs.*,
+                           (SELECT system_type FROM product_info WHERE id = ${localStorage.productId}) AS type,
+                   (SELECT system_model FROM product_info WHERE id = ${localStorage.productId}) AS model,
+                  (SELECT component_count FROM product_programme_detail WHERE categroy_id = 11
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as cpuActiveNum,
+            (SELECT component_count FROM product_programme_detail WHERE categroy_id = 13
+            AND solution_id = ${localStorage.solutionId} AND template_id = ${localStorage.templateId} AND machine_id = ${localStorage.machineId} AND product_id = ${localStorage.productId}) as logicNum
+            FROM component_software cs LEFT JOIN product_programme_detail ppd
+                    ON cs.id = ppd.component_id
+                    WHERE ppd.categroy_id IN (18,19,20) AND ppd.solution_id = ${localStorage.solutionId} AND ppd.template_id = ${localStorage.templateId}
+                    AND ppd.machine_id = ${localStorage.machineId}  AND ppd.product_id = ${localStorage.productId}`;
+
+
+      this.$db.all(sqlSW, (err, res) => {
+          console.log(res, err,SQL);
+          if (err) {
+              this.$logger(err);
+              this.$Notice.error({
+                  title: '搜索失败',
+                  desc: err,
+              });
+          } else {
+              let tempData = [];
+              let typeModelList = [];
+              //处理选择AIX操作系统，带0265，2146（AIX）或2147（Linux），9440，5228
+              for (let i = 0; i < res.length; i++) {
+                  let obj = {
+                      component_count: '',
+                      template_desc: res[i].software_des,
+                      name: res[i].software_categroy,
+                      template_name: res[i].software_FC,
+                      component_id: res[i].software_PN,
+                      Classify: res[i].Classify
+                  };
+                  if (res[i].Classify == res[i].type + '-' + res[i].model) {
+                      //逻辑分区
+                      if (res[i].categroy_id == 13) {
+                          obj.component_count = res[i].logicNum;
+                          //操作系统
+                      } else if (res[i].categroy_id == 14) {
+                          obj.component_count = 1;
+                      } else {
+                          obj.component_count = res[i].cpuActiveNum;
+                      }
+                      typeModelList.push(obj);
+                      continue;
+                  }
+                  //硬件 HPO
+                  if (res[i].Classify == '5313-HPO') {
+                      obj.component_count = 1;
+                      tempData.push(obj);
+                      continue;
+                  }
+                  if (res[i].purchase != undefined && res[i].purchase != null
+                      && res[i].purchase != '' && res[i].purchase == 'N/C') {
+                      obj.component_count = 1;
+                  } else {
+                      obj.component_count = res[i].cpuActiveNum;
+                  }
+                  tempData.push(obj);
+              }
+
+              //处理列表顺序
+              let headerList = [];
+              for (let k = tempData.length - 1; k >= 0; k--) {
+                  if (tempData[k].template_name == undefined || tempData[k].template_name == null || tempData[k].template_name == '') {
+                      headerList.push(tempData[k]);
+                      tempData.splice(k, 1);
+                  }
+              }
+              for (let m = 0; m < headerList.length; m++) {
+                  this.addirmTable.push(headerList[m]);
+                  for (let j = 0; j < tempData.length; j++) {
+                      if (headerList[m].Classify == tempData[j].Classify && headerList[m].name == tempData[j].name) {
+                          this.addirmTable.push(tempData[j]);
+                      }
+                  }
+              }
+              this.addirmTable = typeModelList.concat(this.addirmTable);
+              this.addirmTable.forEach(item => {
+                  if (item.name == 0) {
+                      item.name = '逻辑分区';
+                  } else if (item.name == 1) {
+                      item.name = '操作系统';
+                  } else if (item.name == 2) {
+                      item.name = '应用程序';
+                  } else if (item.name == 18) {
+                      item.name = '操作系统SWMA';
+                  } else if (item.name == 19) {
+                      item.name = '逻辑分区SWMA';
+                  } else if (item.name == 20) {
+                      item.name = '应用程序SWMA';
+                  }
+
+              });
           }
-        });
-        arr.forEach(item => {
-          if (item.name == 1) {
-            item.name = '操作系统';
-            return this.addirmTable.push(item);
-          }
-        });
-        arr.forEach(item => {
-          if (item.name == 2) {
-            item.name = '应用程序';
-            return this.addirmTable.push(item);
-          }
-        });
-        arr.forEach(item => {
-          if (item.name == 18) {
-            item.name = '操作系统SWMA';
-            return this.addirmTable.push(item);
-          }
-        });
-        arr.forEach(item => {
-          if (item.name == 19) {
-            item.name = '逻辑分区SWMA';
-            return this.addirmTable.push(item);
-          }
-        });
-        arr.forEach(item => {
-          if (item.name == 20) {
-            item.name = '应用程序SWMA';
-            return this.addirmTable.push(item);
-          }
-        });
-        console.log(this.addirmTable);
-      }
-    });
+      });
+console.log('SQL------'+SQL);
+    // this.$db.all(SQL, (err, res) => {
+    //   console.log(res, err,SQL);
+    //   if (err) {
+    //     this.$logger(err);
+    //     this.$Notice.error({
+    //       title: '搜索失败',
+    //       desc: err,
+    //     });
+    //   } else {
+    //     this.addirmTable = [];
+    //     const arr = [];
+    //       for (let i = 0; i < res.length; i++) {
+    //           let obj = {
+    //               component_count: '',
+    //               template_desc: res[i].software_des,
+    //               name: res[i].software_categroy,
+    //               template_name: res[i].software_FC,
+    //               component_id: res[i].software_PN,
+    //           };
+    //           if (res[i].Classify == res[i].type+'-'+ res[i].model) {
+    //               //逻辑分区
+    //               if (res[i].categroy_id == 13) {
+    //                   obj.component_count = res[i].logicNum;
+    //                   //操作系统
+    //               } else if (res[i].categroy_id == 14) {
+    //                   obj.component_count = 1;
+    //               } else {
+    //                   obj.component_count = res[i].cpuActiveNum;
+    //               }
+    //               arr.push(obj);
+    //               continue;
+    //           }
+    //           //硬件 HPO
+    //           if (res[i].Classify == '5313-HPO') {
+    //               obj.component_count = 1;
+    //               arr.push(obj);
+    //               continue;
+    //           }
+    //           if (res[i].purchase != undefined && res[i].purchase != null
+    //               && res[i].purchase != '' && res[i].purchase == 'N/C') {
+    //               obj.component_count = 1;
+    //           } else{
+    //               obj.component_count = res[i].cpuActiveNum;
+    //           }
+    //           arr.push(obj);
+    //       };
+    //       debugger
+    //     this.addirmTable = arr.filter(item => {
+    //       if (item.name == 0) {
+    //         item.name = '逻辑分区';
+    //         return true;
+    //       }
+    //     });
+    //     arr.forEach(item => {
+    //       if (item.name == 1) {
+    //         item.name = '操作系统';
+    //         return this.addirmTable.push(item);
+    //       }
+    //     });
+    //     arr.forEach(item => {
+    //       if (item.name == 2) {
+    //         item.name = '应用程序';
+    //         return this.addirmTable.push(item);
+    //       }
+    //     });
+    //     arr.forEach(item => {
+    //       if (item.name == 18) {
+    //         item.name = '操作系统SWMA';
+    //         return this.addirmTable.push(item);
+    //       }
+    //     });
+    //     arr.forEach(item => {
+    //       if (item.name == 19) {
+    //         item.name = '逻辑分区SWMA';
+    //         return this.addirmTable.push(item);
+    //       }
+    //     });
+    //     arr.forEach(item => {
+    //       if (item.name == 20) {
+    //         item.name = '应用程序SWMA';
+    //         return this.addirmTable.push(item);
+    //       }
+    //     });
+    //     console.log(this.addirmTable);
+    //   }
+    // });
   },
 };
 </script>

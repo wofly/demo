@@ -109,6 +109,7 @@ export default {
         }
         console.log(res);
         if (res) {
+            let update=` update product_programme_detail set component_count = '${num*10}' where id in (select distinct detail.id from product_programme_detail detail join component_software ware on ware.categroy_id=detail.categroy_id where detail.categroy_id in (18,19,20) AND detail.component_count>9 and product_id=${localStorage.productId} and template_id='${localStorage.templateId}' and solution_id='${localStorage.solutionId}'and machine_id='${localStorage.machineId}')`
             const id = res.id;
              const updateSql = `UPDATE product_programme_detail set 'component_count'='${num}' where id=${id} and template_id='${localStorage.templateId}' and solution_id='${localStorage.solutionId}'`;
            if (num == 2) {
@@ -118,8 +119,16 @@ export default {
                    if (res) {
                        console.log('修改失败');
                    } else {
-                       console.log('修改成功');
+                       console.log('修改成功',num);
                        this.$store.commit('setCPU', num);
+                       /*修改软件里面维保的数量*/
+                       this.$db.run(update, (err, res) => {
+                           if (res) {
+                               console.log('修改失败');
+                           } else {
+                               console.log('修改成功');
+                           }
+                       });
                    }
                });
            }
@@ -215,6 +224,14 @@ export default {
                             } else {
                                 console.log('修改成功');
                                 this.$store.commit('setCPU', num);
+                                /*修改软件里面维保的数量*/
+                                this.$db.run(update, (err, res) => {
+                                    if (res) {
+                                        console.log('修改失败');
+                                    } else {
+                                        console.log('修改成功');
+                                    }
+                                });
                             }
                         });
                     }else{
@@ -311,7 +328,6 @@ export default {
         this.tempon = res.computeNode_cnt;
         this.name_id = res.id;
         this.getsql(getcpu, res => { // 获取cpu的计算节点数量，改变默认的
-          console.log(res,getcpu);
           if (res) {
             this.valueNum = res.component_count;
             // this.$store.mutations.setCPU(res.component_count)

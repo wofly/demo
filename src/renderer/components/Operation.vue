@@ -1,7 +1,7 @@
 <template>
     <!--操作系统-->
     <div class="wrap">
-        <div class="font-style"><p>主要操作系统</p></div>
+        <div class="font-style"><p>{{$t('OperatingSystem.lists.MainOperatingSystem.title')}}</p></div>
         <ul class="inpList for-main">
             <li>
                 <el-select v-model="value"  size="mini" @change="getOperation(false)" >
@@ -13,7 +13,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>激活核心数：</li>
+            <li>{{$t('OperatingSystem.lists.MainOperatingSystem.content1')}}：</li>
             <li>
                 <el-select v-model="numN" placeholder="" class="sel" @change="getOperation" disabled>
                     <el-option
@@ -23,7 +23,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>维保期限：</li>
+            <li>{{$t('OperatingSystem.lists.MainOperatingSystem.content2')}}：</li>
             <li>
                 <el-select v-model="year" placeholder="" class="sel" @change="getOperation(true)"  size="mini">
                     <el-option
@@ -35,7 +35,7 @@
                 </el-select>
             </li>
         </ul>
-        <div class="font-style"><p>次要操作系统</p></div>
+        <div class="font-style"><p>{{$t('OperatingSystem.lists.MinorOperatingSystem.title')}}</p></div>
         <ul class="inpList for-main">
             <li>
                 <el-select v-model="value" placeholder="" disabled>
@@ -46,7 +46,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>激活核心数：</li>
+            <li>{{$t('OperatingSystem.lists.MinorOperatingSystem.content1[0]')}}：</li>
             <li>
                 <el-select v-model="options1" placeholder="" class="sel" disabled>
                     <el-option
@@ -56,7 +56,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>维保期限：</li>
+            <li>{{$t('OperatingSystem.lists.MinorOperatingSystem.content1[1]')}}：</li>
             <li>
                 <el-select v-model="options1" placeholder="" class="sel" disabled>
                     <el-option
@@ -77,7 +77,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>激活核心数：</li>
+            <li>{{$t('OperatingSystem.lists.MinorOperatingSystem.content2[0]')}}：</li>
             <li>
                 <el-select v-model="options1" placeholder="" class="sel" disabled>
                     <el-option
@@ -87,7 +87,7 @@
                     </el-option>
                 </el-select>
             </li>
-            <li>维保期限：</li>
+            <li>{{$t('OperatingSystem.lists.MinorOperatingSystem.content2[1]')}}：</li>
             <li>
                 <el-select v-model="options1" placeholder="" class="sel" disabled>
                     <el-option
@@ -312,9 +312,9 @@ select carry_software_id from software_software ss left join component_software 
         if(this.id){
              //const updateSql = `UPDATE product_programme_detail set 'component_count'='${this.num}',component_id='${this.options[this.value].id}','years'='${this.year}' where id=${this.id} `;
             let update=[
-                `UPDATE product_programme_detail set 'component_count'='${this.numN}',component_id='${this.options[this.value].id}' where id=${this.id} `,
+                `UPDATE product_programme_detail set 'component_count'='${this.num}',component_id='${this.options[this.value].id}' where id=${this.id} `,
                 `UPDATE product_programme_detail set 'component_count'='${this.num}',component_id='${this.options2[this.year].fatherId}' where id=${this.fatherId} `,
-                `UPDATE product_programme_detail set 'component_count'='${this.num}',component_id='${this.options2[this.year].childId}' where id=${this.childId} `
+                `UPDATE product_programme_detail set 'component_count'='${this.numN}',component_id='${this.options2[this.year].childId}' where id=${this.childId} `
             ]
             console.log(update)
             update.forEach(item=>{

@@ -496,7 +496,7 @@ export default {
     // 生命周期执行渲染数据
     const than = this;
     await new Promise(function(resolve, reject) {
-      const getCpu = 'select component_count from product_programme_detail where product_id=1 and categroy_id=3';
+      const getCpu = `select component_count from product_programme_detail where solution_id='${localStorage.solutionId}' and template_id='${localStorage.templateId}'and product_id='${localStorage.productId}' and machine_id='${localStorage.machineId}' and categroy_id=3`;
       than.$db.get(getCpu, (err, res) => { // 获取库里面的类型
         if (err) {
           console.log('报错');
@@ -544,11 +544,9 @@ export default {
           vm.MAXnums.push(res[i].memory_cnt);
           numMax = res[res.length - 1].memory_cnt;
           vm.MaxNum = numMax;
-          console.log('判断执行', res[i]);
         }
         vm.domList.forEach(item => {
           item.numX = [ ...vm.MAXnums ];
-          console.log(item.numX);
         });
         // vm.setdefault(); // 默认初始
 

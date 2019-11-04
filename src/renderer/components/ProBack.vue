@@ -2,26 +2,26 @@
   <!--电源选择select-->
   <div class="wrap">
     <div class="listtap">
-      <div>机器1 - 配置清单</div>
-      <button class="el-button el-button--primary el-button--small" @click="goBack">返回</button>
+      <div>{{$t('Proback.machinetitle')}}1 - {{$t('Proback.inventory')}}</div>
+      <button class="el-button el-button--primary el-button--small" @click="goBack">{{$t('Proback.back')}}</button>
     </div>
     <!--硬件-->
     <div class="tsLists">
       <el-row :gutter="24">
         <el-col :span="3">
-        <div class="grid-content">硬件</div>
+        <div class="grid-content">{{$t('Proback.hardware.title')}}</div>
       </el-col>
         <el-col :span="5">
-          <div class="grid-content">列表总价：￥{{totalPrice}}</div>
+          <div class="grid-content">{{$t('Proback.hardware.list.TotalPrice')}}：￥{{totalPrice}}</div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">折扣：
+          <div class="grid-content bg-purple">{{$t('Proback.hardware.list.Discount')}}：
             <el-input v-model="input" @change="discountData(totalPrice,input,input1,2)" ></el-input>
             %off
           </div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">折扣总价：￥
+          <div class="grid-content bg-purple">{{$t('Proback.hardware.list.DiscountedPrice')}}：￥
             <el-input v-model="input1" @change="getDiscountPrice(totalPrice,input,input1,2)"></el-input>
           </div>
         </el-col>
@@ -31,19 +31,19 @@
     <div class="tsLists">
       <el-row :gutter="24">
         <el-col :span="3">
-          <div class="grid-content">软件</div>
+          <div class="grid-content">{{$t('Proback.software.title')}}</div>
         </el-col>
         <el-col :span="5">
-          <div class="grid-content">列表总价：￥{{totalPrice1}}</div>
+          <div class="grid-content">{{$t('Proback.software.list.TotalPrice')}}：￥{{totalPrice1}}</div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">折扣：
+          <div class="grid-content bg-purple">{{$t('Proback.software.list.Discount')}}：
             <el-input v-model="input2"  @change="discountData1(totalPrice1,input2,input3,1)" ></el-input>
             %off
           </div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">折扣总价：￥
+          <div class="grid-content bg-purple">{{$t('Proback.software.list.DiscountedPrice')}}：￥
             <el-input v-model="input3"  @change="getDiscountPrice1(totalPrice1,input2,input3,1)"></el-input>
           </div>
         </el-col>
@@ -53,19 +53,19 @@
     <div class="tsLists">
       <el-row :gutter="24">
         <el-col :span="3">
-          <div class="grid-content">机器</div>
+          <div class="grid-content">{{$t('Proback.machinename.title')}}</div>
         </el-col>
         <el-col :span="5">
-          <div class="grid-content">列表总价：￥{{totalPrice2}}</div>
+          <div class="grid-content">{{$t('Proback.machinename.list.TotalPrice')}}：￥{{totalPrice2}}</div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">折扣：
+          <div class="grid-content bg-purple">{{$t('Proback.machinename.list.Discount')}}：
             <el-input v-model="input4"  @change="discountData2(input4)" ></el-input>
             %off
           </div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content"> 折扣总价：￥{{input5}}</div>
+          <div class="grid-content"> {{$t('Proback.machinename.list.DiscountedPrice')}}：￥{{input5}}</div>
         </el-col>
       </el-row>
     </div>
@@ -76,15 +76,15 @@
           <div class="grid-content"></div>
         </el-col>
         <el-col :span="5">
-          <div class="grid-content">机器总价:￥{{totalPrice3}}</div>
+          <div class="grid-content">{{$t('Proback.aggregate.TotalMachinePrice')}}:￥{{totalPrice3}}</div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content bg-purple">机器数量：
+          <div class="grid-content bg-purple">{{$t('Proback.aggregate.quantity')}}：
             <el-input v-model="input6" @change="discountData3(input6)" ></el-input>
           </div>
         </el-col>
         <el-col :span="7">
-          <div class="grid-content"> 折扣总价：￥{{input7}}</div>
+          <div class="grid-content"> {{$t('Proback.aggregate.discountedprice')}}：￥{{input7}}</div>
         </el-col>
       </el-row>
     </div>
@@ -95,7 +95,7 @@
           style="width: 100%; background: none;">
         <el-table-column
             prop="nums"
-            label="序号"
+            :label="$t('Proback.list.serialNumber')"
             width="180">
         </el-table-column>
         <el-table-column
@@ -109,19 +109,19 @@
         </el-table-column>
         <el-table-column
             prop="name"
-            label="分类">
+            :label="$t('Proback.list.classify')">
         </el-table-column>
         <el-table-column
             prop="description"
-            label="配件描述">
+            :label="$t('Proback.list.describingAccessories')">
         </el-table-column>
         <el-table-column
             prop="component_count"
-            label="数量">
+            :label="$t('Proback.list.amount')">
         </el-table-column>
         <el-table-column
             prop="listprice_onshore"
-            label="列表价">
+            :label="$t('Proback.list.TotalPrice')">
         </el-table-column>
       </el-table>
     </div>
@@ -133,6 +133,7 @@ export default {
   name: 'PLlist',
   data() {
     return {
+
      // 硬件
       input: 10,
       input1: 0,
@@ -160,17 +161,6 @@ export default {
       options: [],
       showLists: [],
 
-      // HDWnum: 0, // 硬件总数
-      // HDWdis: 10, // 硬件折扣
-      // HDWnumDis: 0, // 硬件打折总量
-      //
-      // SFWnum: 0, // 硬件总数
-      // SFWdis: 10.00, // 硬件折扣
-      // SFWnumDis: 0, // 硬件打折总量
-      //
-      // MACnum: 0, // 硬件总数
-      // MACdis: 10.00, // 硬件折扣
-      // MACnumDis: 0, // 硬件打折总量
 
       MACadd: 0,
       MACaddDis: 0,
@@ -183,31 +173,31 @@ export default {
   },
   methods: {
 
-    /*硬件*/
+    /*硬件 输入 折扣价 算出 折扣*/
     getDiscountPrice(total,discount,totalDiscount,num) {
       this.input = 100 - totalDiscount / this.totalPrice * 100;
       this.mediumHardDiskData(total,discount,totalDiscount,num);
     },
-    /*硬件*/
+    /*硬件 输入 折扣 算出 折扣价*/
     discountData(total,discount,totalDiscount,num) {
       if (discount < 100 && discount > 9) {
         this.input1 = this.totalPrice * (100 - discount) / 100;
         this.mediumHardDiskData(total,discount,totalDiscount,num);
       } else {
         this.$message({
-          message: '请输入正确折扣价',
+          message: '请输入正确折扣',
           type: 'warning',
         });
       }
     },
 
 
-    /*软件*/
+    /*软件 输入 折扣价 算出 折扣*/
     getDiscountPrice1(total,discount,totalDiscount,num) {
       this.input2 = 100 - totalDiscount / this.totalPrice1 * 100;
       this.mediumHardDiskData(total,discount,totalDiscount,num);
     },
-    /*软件*/
+    /*软件 输入 折扣 算出 折扣价*/
     discountData1(total,discount,totalDiscount,num) {
       if (discount < 100 && discount > 9) {
         this.input3 = this.totalPrice1 * (100 - discount) / 100;
@@ -242,17 +232,17 @@ export default {
       })
     },
 
-    /*机器*/
+    /*机器 输入 折扣价 算出 折扣*/
     getDiscountPrice2(num) {
       this.input4 = 100 - num / this.totalPrice2 * 100;
     },
-    /*机器*/
+    /*机器 输入 折扣 算出 折扣价*/
     discountData2(num) {
       if (num < 100 && num > 9) {
         this.input5 = this.totalPrice2 * (100 - num) / 100;
       } else {
         this.$message({
-          message: '请输入正确折扣价',
+          message: '请输入正确折扣',
           type: 'warning',
         });
       }
@@ -330,10 +320,19 @@ export default {
             console.log(item)
           })
           this.totalPrice2 = this.totalPrice1 + this.totalPrice;
+          this.totalPrice3 = this.totalPrice1 + this.totalPrice;
 
           this.input1 = this.totalPrice * ((100 - this.input) / 100);
           this.input3 = this.totalPrice1 * ((100 - this.input2) / 100);
-          this.input5 = this.input1 + this.input3
+          this.input5 = this.input1 + this.input3;
+          this.input7 = this.input1 + this.input3;
+            /* 获取用户id  判断权限 */
+            if(localStorage.userId  == 1){
+                this.input1 = '';
+                this.input3 = '';
+                this.input5 = '';
+                this.input7 = '';
+            }
         }
       });
       this.setnum();
@@ -640,6 +639,13 @@ where detail.template_id in(0,1,2) and detail.categroy_id in (1,2,3,5,6,7,8,11,1
     this.getHDWList();
     this.getSFWList();
     this.getDataListnum();
+      /* 获取用户id  判断权限 */
+    if(localStorage.userId == 1){
+      this.input = '';
+      this.input2 = '';
+      this.input4 = '';
+      this.input6 = '';
+    }
   },
 };
 </script>

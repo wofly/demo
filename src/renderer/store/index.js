@@ -16,10 +16,15 @@ const state = {
   allNum: 0,
   allNums: 0,
   data:[],
+  MachineName:""
 };
 
 // 改变VUX全局方法
 const mutations = {
+  changeMachineName(state, [index,name]){ // 判断机器名改变触发
+      state.data[index].remark_name = name
+      console.log(name);
+  },
   updatedata(state){
     state.data=[];
   },

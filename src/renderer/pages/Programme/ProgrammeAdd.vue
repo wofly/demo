@@ -4,35 +4,35 @@
         <div class="g-common-table">
             <div class="g-table-top">
                 <span v-if="this.$route.query.id == null" class=" g-title-text">新建方案</span>
-                <span v-else class=" g-title-text">编辑方案</span>
+                <span v-else class=" g-title-text">{{$t('EditScheme.title')}}</span>
                 <div class="g-table-btn-group ">
-                    <el-button size="small" type="primary" @click="saveData('ruleForm')">保 存</el-button>
-                    <el-button size="small" type="info" plain @click="reload">返 回</el-button>
+                    <el-button size="small" type="primary" @click="saveData('ruleForm')">{{$t('EditScheme.save')}}</el-button>
+                    <el-button size="small" type="info" plain @click="reload">{{$t('EditScheme.back')}}</el-button>
                 </div>
             </div>
         </div>
         <div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="demo-ruleForm new-form">
-                <el-form-item label="客户名称" prop="customerName">
+                <el-form-item :label="$t('EditScheme.abstract.customername')" prop="customerName">
                     <el-input v-model="ruleForm.customerName"></el-input>
                 </el-form-item>
-                <el-form-item label="项目名称" prop="entryName">
+                <el-form-item :label="$t('EditScheme.abstract.projectname')" prop="entryName">
                     <el-input v-model="ruleForm.entryName"></el-input>
                 </el-form-item>
-                <el-form-item label="方案名称" prop="schemeName">
+                <el-form-item :label="$t('EditScheme.abstract.scenarioname')" prop="schemeName">
                     <el-input v-model="ruleForm.schemeName"></el-input>
                 </el-form-item>
-                <el-form-item label="销售经理" prop="salesManager">
+                <el-form-item :label="$t('EditScheme.abstract.salesmanager')" prop="salesManager">
                     <el-input v-model="ruleForm.salesManager"></el-input>
                 </el-form-item>
-                <el-form-item label="售前经理" prop="presalesManager">
+                <el-form-item :label="$t('EditScheme.abstract.salesbeforeManager')" prop="presalesManager">
                     <el-input v-model="ruleForm.presalesManager"></el-input>
                 </el-form-item>
-                <el-form-item label="发货日期" prop="data">
+                <el-form-item :label="$t('EditScheme.abstract.deliverydate')" prop="data">
                     <el-date-picker v-model="ruleForm.data" type="date" placeholder="选择日期" >
                     </el-date-picker>
                 </el-form-item>
-                <el-form-item label="备注" prop="desc">
+                <el-form-item :label="$t('EditScheme.abstract.postscript')" prop="desc">
                     <el-input type="textarea" maxlength="200" @input="descInput" v-model="ruleForm.desc"></el-input>
                 </el-form-item>
                 <span class="total">{{num}}/200</span>
@@ -91,9 +91,10 @@
                         { max: 50, message: '长度在 50 个字符', trigger: 'blur' }
                     ],
                     presalesManager: [
+
                         { max: 50, message: '长度在 50 个字符', trigger: 'blur' }
                     ],
-                    data: {required: true, message: '请选择日期', trigger: 'blur'},
+                    data: { type:'date', required: true, message: '请选择日期', trigger: 'blur'},
                     desc: [
                         { max: 200, message: '长度在 200 个字符', trigger: 'blur' }
                     ]
@@ -118,9 +119,9 @@
 
             /*存储数据*/
             saveData(formName) {
-                this.ruleForm.data = moment(this.ruleForm.data).format('YYYY-MM-DD');
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        this.ruleForm.data = moment(this.ruleForm.data).format('YYYY-MM-DD');
                         console.log(this.solutionId + "xinzeng")
                         if (this.solutionId == null || this.solutionId == undefined) {
                             const SQL = `insert into solution (customer_name,project_name,solution_name,sales_manager,pre_sales_manager,ship_date,description)

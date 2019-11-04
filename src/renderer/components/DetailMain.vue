@@ -1,5 +1,6 @@
 <template>
   <div class="wrap">
+    <!--机器配置-->
     <!--方案详情页面机器数据列表 // 版本备用-->
     <!--<div class="outBox">-->
     <!--<ul class="outList">-->
@@ -17,7 +18,7 @@
           <ul>
             <li>￥<span>{{item.gree}}</span></li>
             <li><span>{{discount}}</span>%off</li>
-            <li><span><input type="number" min="1" v-model="item.num" class="inp" @change="num(index)"></span>Machine
+            <li><span><input type="number" min="1" v-model="item.num" class="inp" ref="inp" @keyup="upnum(index)"  @change="num(index)"></span>Machine
             </li>
             <li>￥<span>{{item.gree * item.num}}</span></li>
           </ul>
@@ -47,13 +48,23 @@
               </ol>
             </li>
             <li class="mainlist-btn">
-              <div class="config">
-
-                <span class="change-height">{{ $t('details.buttons.machineConfiguration')}}</span>
+              <div class="config" @click="clkjump(index)">
+                <span class="change-height config-span">{{ $t('details.buttons.machineConfiguration')}}</span>
               </div>
-              <div class="export" @click="exportCfr(item.machineList[1].remark_name,'cfr',item.machineList[1].solution_id,item.machineList[1].template_id,item.machineList[1].machine_id)">
 
-                <span class="change-height">{{ $t('details.buttons.ExportMachine')}}</span>
+              <div class="export position" @click="exportScheme(index)"  @mouseleave="onMouseOut(index)">
+                <!--加入导出方案 移动选项-->
+                <span class="change-height export-span">{{ $t('details.buttons.ExportMachine')}}</span>
+
+                <div class="programme">
+                  <el-collapse-transition>
+                    <div v-show ="dataList[index].show">
+                      <span class="transition-box" @click="exportCfr(item.machineList[1].remark_name,'exportSolutionCFR',item.machineList[1].product_id,item.machineList[1].solution_id,item.machineList[1].template_id,item.machineList[1].machine_id)">导出方案文件(.ipscs)</span>
+                      <span class="transition-box" @click="exportCfr(item.machineList[1].remark_name,'xlsx',item.machineList[1].product_id,item.machineList[1].solution_id,item.machineList[1].template_id,item.machineList[1].machine_id)">导出方案文件(.xls)</span>
+                      <span class="transition-box" @click="exportCfr(item.machineList[1].remark_name,'cfr',item.machineList[1].product_id,item.machineList[1].solution_id,item.machineList[1].template_id,item.machineList[1].machine_id)">导出方案文件(.cfr)</span>
+                    </div>
+                  </el-collapse-transition>
+                </div>
               </div>
             </li>
           </ul>
@@ -70,11 +81,11 @@
 
 <script>
     import exportCfrOrCsv from '../utils/exportCfrOrCsv';
-
     export default {
         name: 'DetailMain',
         data() {
             return {
+                show: false,
                 showdata: [],
                 tableData: [], // 机器
                 allNums: null, // 1台机器无折扣总价
@@ -101,11 +112,40 @@
                 hardLists: [], // 硬盘总容量汇总
                 rmbLists: [], // 价格汇总
                 machines: [], //初始数量汇总
+                numA:1
             };
         },
         methods: {
+
+          /*导出方案*/
+          exportScheme(index){
+            this.dataList[index].show = !this.dataList[index].show
+          },
+
+          /*导出方案 移出隐藏*/
+          onMouseOut(index){
+            //console.log(index)
+            this.dataList[index].show = false;
+
+          },
+
+            upnum(index){
+                const reg = /^\+?[1-9]\d*$/; // 判断是否是数字
+                let num = this.dataList[index].num+''; // 转为字符换
+                // this.dataList[index].num = 23;
+                if(this.dataList[index].num>0){ // 为数字时赋值
+                    this.numA=this.dataList[index].num
+                }else{
+                   // num=this.dataList[index].num+''
+                    this.dataList[index].num=this.numA //不为数字是变为上一次的值
+                }
+                //console.log("正确",num,this.$refs.inp)
+                this.$refs.inp[index].style.width=(32+num.length*6)+'px' //增加判断长度
+            },
             num(index){ // 根据机器数量对应计算
                 //this.setSQL(index)
+                //let num = this.dataList[index].num;
+               // num.replace(/[^\d]/g,'');
                 let sql = `UPDATE machine_info set count='${this.dataList[index].num}' where id=${this.dataList[index].machine_id}`;
                 this.$db.run(sql,(err,ser)=>{
                     if(!err){
@@ -115,6 +155,7 @@
                       console.log('>>>>',res);
                     }
                 })
+                console.log(this.dataList[index].num);
                // this.$store.commit('changeMachine', this.dataList[index].num); // 使用VUEX判断变化进行组件联系
                 this.$store.commit('setdata',[index,this.dataList[index].num]) // 更改联系列表中的值
                 console.log(this.$store.state.data)
@@ -211,12 +252,14 @@ where detail.template_id='${localStorage.templateId}' and detail.categroy_id in 
                     // console.log(maxnum);
                 });
             },
+
+
             setLists(Num) {
                 const sql = ` select product_info.product_name,product_info.product_des,machine_info.remark_name,detail.categroy_id,info.categroy_name,detail.machine_id,detail.solution_id,detail.template_id,detail.product_id,SUM(detail.component_count) sum_component_count,SUM(detail.component_count*cpu.core) sum_total_core_or_disk_count ,SUM(info.listprice_offshore*detail.component_count) total_price ,? software_des,? software_name,machine_price_detail.discount,machine_price_detail.list_price,machine_price_detail.discount_price,machine_price_detail.configure_type
  from product_programme_detail detail
 JOIN component_cpu cpu ON detail.categroy_id=cpu.category_id
 JOIN component_base_info info on cpu.base_info_id=info.id
-JOIN machine_info on machine_info.id=detail.machine_id
+JOIN machine_info on machine_info.id=detail.machine_id AND machine_info.status=1
 JOIN product_info ON product_info.id=detail.product_id
 JOIN machine_price_detail on machine_price_detail.machine_id=detail.machine_id AND configure_type=1
 where detail.product_id='${localStorage.productId}' and detail.solution_id='${localStorage.solutionId}'
@@ -226,7 +269,7 @@ select product_info.product_name,product_info.product_des,machine_info.remark_na
 from product_programme_detail detail
 JOIN component_memory memory ON detail.categroy_id=memory.category_id
 JOIN component_base_info info on memory.base_info_id=info.id
-JOIN machine_info on machine_info.id=detail.machine_id
+JOIN machine_info on machine_info.id=detail.machine_id AND machine_info.status=1
 JOIN product_info ON product_info.id=detail.product_id
 JOIN machine_price_detail on machine_price_detail.machine_id=detail.machine_id AND configure_type=1
 where detail.product_id='${localStorage.productId}' and detail.solution_id='${localStorage.solutionId}'
@@ -236,7 +279,7 @@ select product_info.product_name,product_info.product_des,machine_info.remark_na
 from product_programme_detail detail
 JOIN component_disk disk ON detail.categroy_id=disk.category_id
 JOIN component_base_info info on disk.base_info_id=info.id
-JOIN machine_info on machine_info.id=detail.machine_id
+JOIN machine_info on machine_info.id=detail.machine_id AND machine_info.status=1
 JOIN product_info ON product_info.id=detail.product_id
 JOIN machine_price_detail on machine_price_detail.machine_id=detail.machine_id AND configure_type=1
 where detail.product_id='${localStorage.productId}' and detail.solution_id='${localStorage.solutionId}'
@@ -246,11 +289,12 @@ select product_info.product_name,product_info.product_des,machine_info.remark_na
 from product_programme_detail detail
 JOIN component_software software ON detail.categroy_id=software.categroy_id AND detail.component_id=software.id
 JOIN component_categroy category ON category.id=software.categroy_id
-JOIN machine_info on machine_info.id=detail.machine_id
+JOIN machine_info on machine_info.id=detail.machine_id AND machine_info.status=1
 JOIN product_info ON product_info.id=detail.product_id
 JOIN machine_price_detail on machine_price_detail.machine_id=detail.machine_id AND configure_type=2
 where detail.categroy_id in(13,14) and detail.solution_id='${localStorage.solutionId}' AND detail.product_id='${localStorage.productId}'
 GROUP BY detail.machine_id,detail.categroy_id`;
+                // console.log(sql)
                 new Promise((resolve, reject)=>{
                     this.$db.all(sql, (err, res) => {
                         if (err) {
@@ -260,17 +304,15 @@ GROUP BY detail.machine_id,detail.categroy_id`;
                                 desc: err,
                             });
                         } else {
-                          console.log(res);
+                          console.log( res)
                           return resolve(res)
                         }
                     })
                 }).then(res=>{
                     for (let i = 0; i < res.length; i++) {
-                        // console.log(res)
                         // console.log('setLists:::', JSON.stringify(res));
                         let result = this.generateFixedDataConstruction(res, "machine_id", "machine_id", "machineList"); // 生成数据
                         this.dataList = [...result];
-                        // console.log(result);
                         this.dataList.forEach(item=>{
                           let num=0
                             item.machineList.forEach(ite=>{
@@ -287,7 +329,7 @@ GROUP BY detail.machine_id,detail.categroy_id`;
                             this.$set(item,'product_des',item.machineList[0].product_des)
                             this.$set(item,'discount',item.machineList[0].discount)
                             this.$set(item,'gree',num)
-
+                            this.$set(item,'show',false)
                         })
 
                         // console.log('dataList:::', JSON.stringify(this.dataList));
@@ -295,10 +337,12 @@ GROUP BY detail.machine_id,detail.categroy_id`;
                      //console.log(this.dataList,this.rmbLists,this.hardLists)
                   // console.log(this.$store.state.data,this.$store.state.data.length)
                   this.$store.commit('updatedata'); //Vuex清空值
+
                     this.dataList.forEach((item,ii)=>{
                         let num=0
                         let nun=0
                         // let nuz=0
+                      console.log( item)
                         let obj=  { // 判断更改执行
                             product_name: item.machineList[0].product_name,//'产品'
                             remark_name:item.machineList[0].remark_name,
@@ -353,9 +397,10 @@ GROUP BY detail.machine_id,detail.categroy_id`;
                 let sql = `UPDATE machine_info set remark_name='${this.dataList[index].name}' where id=${this.dataList[index].machine_id}`;
                 this.$db.run(sql,(err,ser)=>{
                     if(!err){
-                        console.log('修改成功')
+                        console.log('修改成功');
                     }
                 })
+                this.$store.commit('changeMachineName',[index,this.dataList[index].name]);
             },
             /**
              * 判断list中是否存在属性名是idName并且属性值为idValue如果有，返回所在list中的位置
@@ -440,11 +485,18 @@ GROUP BY detail.machine_id,detail.categroy_id`;
             },
 
 
-            clkjump() { // 点击跳转至配置硬件页面
+            clkjump(index) { // 点击跳转至配置硬件页面
+                console.log(this.dataList[index].machineList[0])
+              localStorage.machineId=this.dataList[index].machine_id
+              localStorage.templateId=this.dataList[index].machineList[0].template_id
+              localStorage.solutionId=this.dataList[index].machineList[0].solution_id
+              localStorage.productId=this.dataList[index].machineList[0].product_id
                 this.$router.push({ // 核心语句
                     path: '/Hardware/Processor', // 跳转的路径
                     query: { // 路由传参时push和query搭配使用 ，作用时传递参数
                         id: 0,
+                        sign:3,
+                        signT:11
                     },
                 });
             },
@@ -629,8 +681,8 @@ GROUP BY detail.machine_id,detail.categroy_id`;
                     }
                 });
             },
-            exportCfr(machineName,tailName, solutionId,templateId,machineId) {
-                exportCfrOrCsv.exportCfrOrCsv(machineName,tailName, solutionId,templateId,machineId);
+            exportCfr(machineName,tailName, productId,solutionId,templateId,machineId) {
+                exportCfrOrCsv.exportCfrOrCsv(machineName,tailName, productId,solutionId,templateId,machineId);
             },
         },
         created() {
@@ -767,12 +819,10 @@ GROUP BY detail.machine_id,detail.categroy_id`;
 
   .mainlist-btn {
     display: flex;
-    div:hover{
-      color: #007fff;
-    }
+
     div {
       cursor: pointer;
-      height: 60px;
+      height: 138px;
       padding: 12px;
       text-align: center;
 
@@ -802,7 +852,9 @@ GROUP BY detail.machine_id,detail.categroy_id`;
 
     span {
       padding-left: 12px;
+
     }
+
   }
 
   /*.export{*/
@@ -824,6 +876,14 @@ GROUP BY detail.machine_id,detail.categroy_id`;
     padding-top:15px;
   }
 
+  .config-span:hover{
+    color: #007fff;
+  }
+
+  .export-span:hover{
+    color: #007fff;
+  }
+
   .config:hover{
     background-image:url("../assets/config.png") ;
     background-repeat: no-repeat;
@@ -834,6 +894,28 @@ GROUP BY detail.machine_id,detail.categroy_id`;
     background-image:url("../assets/export.png") ;
     background-repeat: no-repeat;
     background-position: top;
+
+  }
+
+  .position{
+    position: relative;
+  }
+
+  .programme{
+    position: absolute;
+    top: 55px;
+    right: 0;
+  }
+  /*导出方案文件  样式*/
+  .transition-box {
+    width: 175px;
+    height: 45px;
+    line-height: 45px;
+    background: #fff;
+    border: 1px solid #ccc;
+    text-align: center;
+    box-sizing: border-box;
+
   }
 
 </style>

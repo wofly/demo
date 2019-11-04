@@ -1,14 +1,16 @@
 <template>
+    <!--配置硬件-->
     <div class="hardware">
         <header>
-            <b>配置硬件</b>
-            <el-button type="primary" size="mini" @click="getElen()">下一步<i
+            <b>{{$t('ConfigureHardware.title')}}</b>
+            <el-button type="primary" size="mini" @click="getElen()">{{$t('ConfigureHardware.buttonNext')}}<i
                     class="el-icon-arrow-right el-icon--right"></i></el-button>
-            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">上一步</el-button>
+            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">{{$t('ConfigureHardware.buttonLast')}}</el-button>
         </header>
         <div class="hardware-left">
             <nav v-for="(item, index) in config" :key="index" @mouseover="hardwareOver(index)"
-                 @click="hardwareSwi(index)" ref="hardwareSwi" class="hardware-swi" @mouseout="hardwareOut()">
+                 @click="hardwareSwi(index)" ref="hardwareSwi" class="hardware-swi" @mouseout="hardwareOut()" >
+                <!--v-show="(index==4||index==3)?aa:!aa"-->
                 <div class="hardware-left-bolder">
                     <img src="../assets/rectangle-1.png" v-show="!item.boole">
                 </div>
@@ -28,33 +30,33 @@
             <!-- 默认展示配置清单-->
             <el-table :data="tableData" style="width: 100%" v-show="!hardwareBian">
                 <el-table-column align="center" type="index" :index="indexMethod"
-                                 label="序号" width="80">
+                                 :label="$t('Software.details.list.serialNumber')" width="80">
                 </el-table-column>
                 <el-table-column align="center" prop="component_id" label="PN" width="180">
                 </el-table-column>
                 <el-table-column align="center" prop="template_name" label="FC" width="110">
                 </el-table-column>
-                <el-table-column align="center" prop="name" label="分类" width="110">
+                <el-table-column align="center" prop="name" :label="$t('Software.details.list.classify')" width="110">
                 </el-table-column>
-                <el-table-column align="center" prop="template_desc" label="配件描述">
+                <el-table-column align="center" prop="template_desc" :label="$t('Software.details.list.describingAccessories')">
                 </el-table-column>
-                <el-table-column align="center" prop="component_count" label="数量" width="80">
+                <el-table-column align="center" prop="component_count" :label="$t('Software.details.list.Quantity')" width="80">
                 </el-table-column>
-                <el-table-column align="center" prop="total_price" label="列表价" width="180">
+                <el-table-column align="center" prop="total_price" :label="$t('Software.details.list.price')" width="180">
                 </el-table-column>
             </el-table>
             <el-row :gutter="24" v-show="!hardwareBian">
                 <el-col :span="8">
-                    <div class="grid-content">总列表价：{{totalPrice}}</div>
+                    <div class="grid-content">{{$t('Software.details.aggregate')}}：{{totalPrice}}</div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content bg-purple">折扣：
+                    <div class="grid-content bg-purple">{{$t('Software.details.discount')}}：
                             <el-input v-model="input" @change="discountData(input,1)"></el-input>
                         %off
                     </div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content bg-purple">折扣价：￥
+                    <div class="grid-content bg-purple">{{$t('Software.details.discountedPrice')}}：￥
                         <el-input v-model="input1" @change="getDiscountPrice(input1,1)"></el-input>
                     </div>
                 </el-col>
@@ -69,6 +71,7 @@
         data() {
             return {
                 // 折扣输入框
+                aa:false,
                 input: 10,
                 input1: '',
                 // 总价
@@ -87,6 +90,8 @@
                 hardwareOv: -1,
                 //  默认展示配置清单数据
                 tableData: [],
+                // 内部外部总容量
+                totalCapacity:'',
                 coloBa: 0,
                 gettitle:'',
                 config: [//硬件配置的初始显示
@@ -111,7 +116,20 @@
                         erre: false,
                         id:''
                     },
-
+                    {
+                        name: '外部PCle',
+                        img: '../../src/renderer/assets/pcie-1.png',
+                        boole: true,
+                        erre: false,
+                        id:''
+                    },
+                    {
+                        name: '外部硬盘',
+                        img: '../../src/renderer/assets/pcie-1.png',
+                        boole: true,
+                        erre: false,
+                        id:''
+                    },
                     {
                         name: '内部PCle',
                         img: '../../src/renderer/assets/pcie-1.png',
@@ -119,6 +137,7 @@
                         erre: false,
                         id:''
                     },
+
                     {
                         name: '电源',
                         img: '../../src/renderer/assets/power-1.png',
@@ -138,6 +157,8 @@
                     '../../src/renderer/assets/cpu-2.png',
                     '../../src/renderer/assets/internal-2.png',
                     '../../src/renderer/assets/hard-2.png',
+                    '../../src/renderer/assets/external-pcie-2.png',
+                    '../../src/renderer/assets/external-hard-2.png',
                     '../../src/renderer/assets/pcie-2.png',
                     '../../src/renderer/assets/power-2.png',
                     '../../src/renderer/assets/accessories-2.png',
@@ -146,6 +167,8 @@
                     '../../src/renderer/assets/cpu-1.png',
                     '../../src/renderer/assets/internal-1.png',
                     '../../src/renderer/assets/hard-1.png',
+                    '../../src/renderer/assets/external-pcie-1.png',
+                    '../../src/renderer/assets/external-hard-1.png',
                     '../../src/renderer/assets/pcie-1.png',
                     '../../src/renderer/assets/power-1.png',
                     '../../src/renderer/assets/accessories-1.png',
@@ -187,19 +210,21 @@
         },
 
         methods: {
+            /* 输入 折扣 算出 折扣价*/
             discountData(num,type) {
                 if (num < 100 && num > 9) {
                     this.input1 = this.totalPrice * (100 - num) / 100;
                     this.addDiscountData(type)
                 } else {
                     this.$message({
-                        message: '请输入正确折扣价',
+                        message: '请输入正确折扣',
                         type: 'warning',
                     });
                 }
 
             },
 
+            /* 输入 折扣价 算出 折扣*/
             getDiscountPrice(num,type) {
                 this.input = 100 - num / this.totalPrice * 100;
                 this.addDiscountData(type)
@@ -302,22 +327,37 @@
                 if (index == 1) {
                     this.$router.push({path: '/Hardware/Memory', query: {id: 1,sign:this.config[index].id,signT:this.config[index].id1}});
                 }
-                if (index == 5) {
-                    this.$router.push({path: '/Hardware/AccessoriesSelection', query: {id: 5,sign:this.config[index].id,signT:this.config[index].id1}});
+                if (index == 7) {
+                    this.$router.push({path: '/Hardware/AccessoriesSelection', query: {id: 7,sign:this.config[index].id,signT:this.config[index].id1}});
                 }
                 if (index == 3) {
-                    this.$router.push({path: '/Hardware/InteriorPcle', query: {id: 3,sign:this.config[index].id,signT:this.config[index].id1}});
+                    this.$router.push({path: '/Hardware/ExternalPcie', query: {id: 3,sign:this.config[index].id,signT:this.config[index].id1,idElectricity:this.config[index].idElectricity,idExternalPcie:this.config[index].idExternalPcie,idExternalPcie1:this.config[index].idExternalPcie1,idExternalLine:this.config[index].idExternalLine}});
                 }
                 if (index == 4) {
-                    this.$router.push({path: '/Hardware/PowerLine', query: {id: 4,sign:this.config[index].id,signT:this.config[index].id1}});
+                    /*获取 硬盘总容量*/
+                    this.totalCapacity = parseInt(localStorage.internalCapacity) + parseInt(localStorage.externalCapacity);
+                    /*跳转 添加showMax 来 显示 总容量*/
+                    this.$router.push({path: '/Hardware/ExternalHardDisk', query: {id: 4,showMax:false,sign:this.config[index].id,signT:this.config[index].id1}});
+
+                }
+                if (index == 5) {
+                    this.$router.push({path: '/Hardware/InteriorPcle', query: {id: 5,sign:this.config[index].id,signT:this.config[index].id1}});
+                }
+                if (index == 6) {
+                    this.$router.push({path: '/Hardware/PowerLine', query: {id: 6,sign:this.config[index].id,signT:this.config[index].id1}});
                 }
                 if (index == 2) {
-                    this.$router.push({path: '/Hardware/InsideHardDiskDrive', query: {id: 2,sign:this.config[index].id,signT:this.config[index].id1}});
+                    /*获取 硬盘总容量*/
+                    this.totalCapacity = parseInt(localStorage.internalCapacity) + parseInt(localStorage.externalCapacity);
+                    /*跳转 添加showMax 来 显示 总容量*/
+                    this.$router.push({path: '/Hardware/InsideHardDiskDrive', query: {id: 2,showMax:false,sign:this.config[index].id,signT:this.config[index].id1}});
+
                 }
             },
             getElen() {
                 let SQL=  `SELECT categroy_id FROM "product_programme_detail" where categroy_id in (1,2,3,5,6,11) and solution_id=${localStorage.solutionId} and template_id='${localStorage.templateId}'and product_id='${localStorage.productId}' and machine_id='${localStorage.machineId}'`
                 this.$db.all(SQL,(eer,res)=>{
+                    console.log(res,SQL)
                     if(res.length>0){
                         for(let j=0;j<this.getHard.length;j++){
                             for(let i=0;i<res.length;i++){
@@ -343,7 +383,6 @@
                     }
                 })
             },
-
             open() {
                 this.$alert(this.gettitle, {
                     confirmButtonText: '确定',
@@ -375,24 +414,39 @@
             /* 返回上一页*/
             reload() {
                 this.$router.push({path: '/SelectTemplate', query: {}});
-                const deleteSQL=`delete from product_programme_detail where machine_id=${localStorage.machineId}`
-                this.$db.run(deleteSQL, (err, res) => {
+                const changeSQL=` update machine_info set status=0 where id =${localStorage.machineId}`
+                this.$db.run(changeSQL, (err, res) => {
                     if (err) {
                         this.$logger(err);
-                        this.$db.run('ROLLBACK');
-                        console.log(deleteSQL)
+                        // this.$db.run('ROLLBACK');
                         this.$Notice.error({
-                            title: '删除失败',
+                            title: '更改失败',
                             desc: err,
                         });
                     }else{
-                        console.log('删除成功')
+                        console.log('更改成功')
+                        const deleteSQL=`delete from product_programme_detail where machine_id=${localStorage.machineId}`
+                        this.$db.run(deleteSQL, (err, res) => {
+                            if (err) {
+                                this.$logger(err);
+                                this.$db.run('ROLLBACK');
+                                console.log(deleteSQL)
+                                this.$Notice.error({
+                                    title: '删除失败',
+                                    desc: err,
+                                });
+                            }else{
+                                console.log('删除成功')
+                            }
+
+                        });
                     }
 
                 });
+
             },
 
-            /* 获取分离背板数据*/
+            /* 获取列表清单数据*/
             configurationList() {
                 const getti = ` select info.component_PN,info.component_FC,detail.categroy_id,info.name,info.description,detail.component_count,info.listprice_onshore
  from product_programme_detail detail
@@ -436,6 +490,13 @@
 
                         this.totalPrice += obj.total_price;
                         this.input1 = this.totalPrice * ((100 - this.input) / 100);
+                        /* 获取用户id  判断权限 */
+                        if(localStorage.userId == 1){
+                            obj.total_price = '';
+                            this.totalPrice = '';
+                            this.input = '';
+                            this.input1 = '';
+                        }
                         this.tableData.push(obj);
 
                     });
@@ -499,16 +560,36 @@
                         }
                         return false;
                     }
-
+                    let arr=[]
+                    // this.tableData.forEach((item,index)=>{
+                    //     if(arr.length==0){
+                    //        return arr.push(item)
+                    //     }
+                    //     arr.forEach((it,ind)=>{
+                    //         if(it.template_name==item.template_name){
+                    //            return arr[ind].component_count+=item.component_count
+                    //         }else{
+                    //             return arr.push(item)
+                    //         }
+                    //     })
+                    // })
+                    console.log(this.tableData,arr)
                 });
             },
-            /* 自定义行数*/
+            /* 清单页序号*/
             indexMethod(index) {
                 return index + 1;
             },
+
             getDatabase(){//刚进入页面获取数据，
                 let baseSQL=`select id,name,display from component_categroy `;
-                this.$db.all(baseSQL,(err,res)=>{
+                    new Promise((resolve, reject)=>{
+                    this.$db.all(baseSQL,(err,res)=>{
+                        if(!err){
+                            resolve(res)
+                        }
+                    })
+                }).then(res=>{
                     console.log(res)
                     res.filter((item,index)=>{
                         if(item.id==3){ //赋值给cpu的值
@@ -525,29 +606,42 @@
                         if(item.id==3){//赋值给内存的值
                             //this.config[1].id1=item.id
                             this.$set(this.config[1],'id1',item.id)
-                            this.$set(this.config[3],'id1',item.id)
+                            this.$set(this.config[5],'id1',item.id)
                         }
                         if(item.id==7){//赋值给内部硬盘、配件的值要传给组件里面
                             this.$set(this.config[2],'id1',item.id)
-                            this.config[5].id=item.id
+                            this.config[7].id=item.id
                         }
                         if(item.id==17){//赋值给配件的值
-                            this.$set(this.config[5],'id1',item.id)
+                            this.$set(this.config[7],'id1',item.id)
                         }
                         if(item.id==1){//赋值给内部硬盘的值
                             this.config[2].id=item.id
                             this.config[2].name=item.name
                         }
-                        if(item.id==5){//赋值给电源的值
-                            this.config[4].id=item.id
-                            this.config[4].name=item.name
+                        if(item.id==5){//赋值给电源的值、外部pcie的值电源的id
+                            this.config[6].id=item.id
+                            this.config[6].name=item.name
+                            this.$set(this.config[3],'idElectricity',item.id)
+                        }
+                        if(item.id==23){//赋值给外部pcie的值 "扩展柜机壳"id
+                            this.$set(this.config[3],'idExternalPcie',item.id)
+                        }
+                        if(item.id==24){//赋值给外部pcie的值"扩展机瓤"id
+                            this.$set(this.config[3],'idExternalPcie1',item.id)
+                        }
+                        if(item.id==25){//赋值给外部pcie的值""扩展柜连接线"id
+                            this.$set(this.config[3],'idExternalLine',item.id)
                         }
                         if(item.id==8){//赋值给电源的值
-                            this.$set(this.config[4],'id1',item.id)
+                            this.$set(this.config[6],'id1',item.id)
+                            this.$set(this.config[3],'id1',item.id)
                         }
                         if(item.id==6){
+                            this.config[5].id=item.id
+                            this.config[5].name='内部PCIe'
                             this.config[3].id=item.id
-                            this.config[3].name='内部PCIe'
+                            this.config[3].name='外部PCIe'
                         }
                     })
                     console.log(this.config)
@@ -555,8 +649,9 @@
 
             }
         },
-        mounted() {
-            this.getDatabase()
+         created() {
+           this.getDatabase()
+            console.log(111111)
             this.configurationList();
         },
 

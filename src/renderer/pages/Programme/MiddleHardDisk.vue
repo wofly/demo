@@ -3,7 +3,7 @@
     <div class="other">
         <div class="config">
             <p class="title content-label">
-                <span class="config-title">Internal Disk</span>
+                <span class="config-title">{{$t('backPlane.infixInternalDisk.title')}}</span>
             </p>
             <div class="modify for-main">
                 <div v-for="(ite,ind) in addHardDisk" :key="ind">
@@ -29,12 +29,12 @@
                     </el-select>
                 </div>
                 <br>
-                <span v-if="hardDisksVolume!=''" class="tips">中置{{hardDisksVolume}}GB</span>
+                <span v-if="hardDisksVolume!=''" class="tips">{{$t('backPlane.infixInternalDisk.title')}}{{hardDisksVolume}}GB</span>
                 <br>
                 <el-button size="mini" icon="el-icon-plus" disabled="disabled"></el-button>
-                <span class="add-cables" >添加硬盘</span>
+                <span class="add-cables" >{{$t('backPlane.infixInternalDisk.title')}}</span>
                 <br>
-                <span class="tips">已使用插槽：{{num}} / 2</span>
+                <span class="tips">{{$t('backPlane.infixInternalDisk.content2')}}：{{num}} / 2</span>
             </div>
         </div>
     </div>
@@ -110,9 +110,12 @@
             /*硬盘型号  下拉获取*/
             getHardDiskModel(index) {
                 this.addHardDisk[index].hardDiskSelection = [];
-                const SQL = `select disk_des,id from component_disk where disc_type in(
+                const SQL = `select info.description disk_des,disk.id from component_disk disk left join
+                component_base_info info on
+                info.id=disk.base_info_id where disk.disc_type in(
                 SELECT disc_type FROM "component_disk" cd left join backplane_disk bd on cd.id=bd.disk_id where cd.id in
                 (select disk_id from backplane_disk where backplane_id=9))`;
+                console.log(SQL)
                 this.$db.all(SQL, (err, res) => {
                     if (err) {
 

@@ -1,8 +1,8 @@
 <template>
     <!--逻辑分区-->
     <div class="wrap">
-        <div class="font-style"><p>逻辑分区</p></div>
-        <div class="wrap-box"><span>逻辑分区：</span>
+        <div class="font-style"><p>{{$t('LogicalPartition.lists.LogicalPartition.title')}}</p></div>
+        <div class="wrap-box"><span>{{$t('LogicalPartition.lists.LogicalPartition.content1')}}：</span>
             <div class="wrap-slider">
                 <el-slider v-model="valueCount"
                          :show-tooltip="false"
@@ -14,7 +14,7 @@
                 <el-input class="sel marSel" v-model="valueCount" disabled="disabled"   placeholder=""></el-input>
             </div>
         </div>
-        <div class="font-style"><p>虚拟化软件</p></div>
+        <div class="font-style"><p>{{$t('LogicalPartition.lists.VirtualizationSoftware.title')}}</p></div>
         <ul class="inpList for-main">
             <li>
                 <el-select class="selStyle"  v-model="value" placeholder="请选择"size="mini" @change="selectNameAdd(value)">
@@ -29,7 +29,7 @@
             <p>*</p>
             <li>
                 <el-input class="sel" size="mini" v-model="optionCount" disabled="disabled"    placeholder=""></el-input>
-                <span style="margin-left: 50px">维保期限：</span>
+                <span style="margin-left: 50px">{{$t('LogicalPartition.lists.VirtualizationSoftware.content1')}}：</span>
                 <el-select  class="other-select-one  sel"  placeholder="请选择" v-model="valueSele" size="mini" @change="selectNameAdd(valueSele)">
                     <el-option
                             v-for="(it,ind) in yearsDate"
@@ -289,9 +289,9 @@
             selectNameAdd(index) {
                 if (this.frontHarddiskId) {
                     let updateSql=[
-                        `UPDATE product_programme_detail set 'component_count'='${this.optionCount}',component_id='${this.options[this.value].id}' where id=${this.frontHarddiskId} `,
+                        `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.options[this.value].id}' where id=${this.frontHarddiskId} `,
                         `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.yearsDate[index].fatherId}' where id=${this.fatherId} `,
-                        `UPDATE product_programme_detail set 'component_count'='1',component_id='${this.yearsDate[index].childId}' where id=${this.childId}`
+                        `UPDATE product_programme_detail set 'component_count'='${this.optionCount}',component_id='${this.yearsDate[index].childId}' where id=${this.childId}`
                     ]
                     updateSql.forEach(item=>{
                         this.$db.run(item, (err, res) => {

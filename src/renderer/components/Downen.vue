@@ -1,10 +1,11 @@
 <template>
+  <!--配置软件-->
     <div class="hardware">
         <header>
-            <b>配置软件</b>
-            <el-button type="primary" size="mini" @click="getElen()">下一步<i
+            <b>{{$t('ConfigureSoftware.title')}}</b>
+            <el-button type="primary" size="mini" @click="getElen()">{{$t('ConfigureSoftware.buttonNext')}}<i
                     class="el-icon-arrow-right el-icon--right"></i></el-button>
-            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">上一步</el-button>
+            <el-button type="primary" icon="el-icon-arrow-left" size="mini" @click="reload">{{$t('ConfigureSoftware.buttonLast')}}</el-button>
         </header>
         <div class="hardware-left">
             <nav v-for="(item, index) in config" :key="index" @mouseover="hardwareOver(index)"
@@ -24,33 +25,33 @@
             <!-- 默认展示配置清单-->
             <el-table :data="tableData" style="width: 100%" v-show="!hardwareBian">
                 <el-table-column align="center" type="index" :index="indexMethod"
-                                 label="序号" width="80">
+                                 :label="$t('Software.details.list.serialNumber')" width="80">
                 </el-table-column>
                 <el-table-column align="center" prop="component_id" label="PN" width="180">
                 </el-table-column>
                 <el-table-column align="center" prop="template_name" label="FC" width="110">
                 </el-table-column>
-                <el-table-column align="center" prop="name" label="分类" width="110">
+                <el-table-column align="center" prop="name" :label="$t('Software.details.list.classify')" width="110">
                 </el-table-column>
-                <el-table-column align="center" prop="template_desc" label="配件描述">
+                <el-table-column align="center" prop="template_desc" :label="$t('Software.details.list.describingAccessories')">
                 </el-table-column>
-                <el-table-column align="center" prop="component_count" label="数量" width="80">
+                <el-table-column align="center" prop="component_count" :label="$t('Software.details.list.Quantity')" width="80">
                 </el-table-column>
-                <el-table-column align="center" prop="total_price" label="价格表" width="180">
+                <el-table-column align="center" prop="total_price" :label="$t('Software.details.list.price')" width="180">
                 </el-table-column>
             </el-table>
             <el-row :gutter="24" v-show="!hardwareBian">
                 <el-col :span="8">
-                    <div class="grid-content">总列表价：{{totalPrice}}</div>
+                    <div class="grid-content">{{$t('Software.details.aggregate')}}：{{totalPrice}}</div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content bg-purple">折扣：
+                    <div class="grid-content bg-purple">{{$t('Software.details.discount')}}：
                         <el-input v-model="input" @change="discountData(input,2)"></el-input>
                         %off
                     </div>
                 </el-col>
                 <el-col :span="8">
-                    <div class="grid-content bg-purple">折扣价：￥
+                    <div class="grid-content bg-purple">{{$t('Software.details.discountedPrice')}}：￥
                         <el-input v-model="input1" @change="getDiscountPrice(input1,2)"></el-input>
                     </div>
                 </el-col>
@@ -84,43 +85,68 @@ export default {
       //  默认展示配置清单数据
       tableData: [],
       coloBa: 0,
-      config: [
-        {
-          name: '逻辑分区',
-          img: '../../src/renderer/assets/logic-1.png',
-          img1: '../../src/renderer/assets/logic-2.png',
-          boole: true,
-        },
-        {
-          name: '操作系统',
-          img: '../../src/renderer/assets/logic-3.png',
-          img1: '../../src/renderer/assets/logic-4.png',
-          boole: true,
-        },
-        {
-          name: '应用程序',
-          img: '../../src/renderer/assets/logic-5.png',
-          img1: '../../src/renderer/assets/logic-6.png',
-          boole: true,
-        },
-      ],
+      // config: [
+      //   {
+      //     name: '逻辑分区',
+      //     img: '../../src/renderer/assets/logic-1.png',
+      //     img1: '../../src/renderer/assets/logic-2.png',
+      //     boole: true,
+      //   },
+      //   {
+      //     name: '操作系统',
+      //     img: '../../src/renderer/assets/logic-3.png',
+      //     img1: '../../src/renderer/assets/logic-4.png',
+      //     boole: true,
+      //   },
+      //   {
+      //     name: '应用程序',
+      //     img: '../../src/renderer/assets/logic-5.png',
+      //     img1: '../../src/renderer/assets/logic-6.png',
+      //     boole: true,
+      //   },
+      // ],
     };
   },
+  computed:{
+      config() {
+          return [
+              {
+                  name: this.$t('Software.LogicalPartition.title'),
+                  img: '../../src/renderer/assets/logic-1.png',
+                  img1: '../../src/renderer/assets/logic-2.png',
+                  boole: true,
+              },
+              {
+                  name: this.$t('Software.OperatingSystem.title'),
+                  img: '../../src/renderer/assets/logic-3.png',
+                  img1: '../../src/renderer/assets/logic-4.png',
+                  boole: true,
+              },
+              {
+                  name: this.$t('Software.Application.title'),
+                  img: '../../src/renderer/assets/logic-5.png',
+                  img1: '../../src/renderer/assets/logic-6.png',
+                  boole: true,
+              },
+          ]
+      }
+  },
   methods: {
-
+      /* 输入 折扣 算出 折扣价*/
     discountData(num, type) {
       if (num < 100 && num > 9) {
         this.input1 = this.totalPrice * (100 - num) / 100;
         this.addDiscountData(type);
       } else {
         this.$message({
-          message: '请输入正确折扣价',
+          message: '请输入正确折扣',
           type: 'warning',
         });
       }
 
     },
 
+      /* 输入 折扣价 算出 折扣*/
     getDiscountPrice(num, type) {
       this.input = 100 - num / this.totalPrice * 100;
       this.addDiscountData(type);
@@ -719,7 +745,7 @@ export default {
          ) cs left join software_software ss on ss.carry_software_id= cs.id
 
 union
-select distinct cs.id,cs.software_PN,cs.software_FC,cs.categroy_id,cs.software_des,cs.purchase,detail.component_count from (
+select distinct cs.id,cs.software_PN,cs.software_FC,cs.categroy_id,cs.software_des,detail.component_count,cs.purchase from (
 select *
 from component_software  where id in(select component_id from product_programme_detail where categroy_id in(18,19,20) and template_id='${localStorage.templateId}'and solution_id='${localStorage.solutionId}'AND product_id=${localStorage.productId}
  and machine_id='${localStorage.machineId}'))cs left join product_programme_detail detail on detail.component_id = cs.id `;
@@ -747,6 +773,13 @@ from component_software  where id in(select component_id from product_programme_
           }
           console.log(this.totalPrice, item.purchase);
           this.input1 = this.totalPrice * ((100 - this.input) / 100);
+            /* 获取用户id  判断权限 */
+            if(localStorage.userId == 1){
+                obj.total_price = '';
+                this.totalPrice = '';
+                this.input = '';
+                this.input1 = '';
+            }
           return arr.push(obj);
         });
         this.tableData = arr.filter(item => {

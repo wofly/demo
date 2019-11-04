@@ -15,6 +15,57 @@
 	"Updates": "检查更新",
 	"AboutUs": "关于我们"
   },
+  "productSelect": {
+    "title": "选择产品",
+    "button": "返 回"
+  },
+  "ChooseTemplate": {
+    "title": "选择模板",
+    "button": "返 回",
+    "lists": {
+      "InitialConfiguration": "初始配置",
+      "RecommendedConfiguration": "推荐配置"
+    }
+  },
+  "newProgram":{
+	"newProgram":"新建方案",
+	"ImportPlan":"导入方案文件"
+  },
+  "Login":{
+	"Login":"登 录",
+	"register":"注 册",
+	"Account":" 账 号",
+	"Password":" 密 码",
+	"lists":{
+		"mailbox":"邮箱",
+		"EmailVerificationCode":"邮箱验证码",
+		"Password":"密码",
+		"confirmPassword":"再次确认密码",
+		"Name":"姓名",
+		"MobilePhone":"手机号",
+		"Company":"所属公司",
+		"Department": "所属部门",
+		"Position":"所属职位",
+		"button":["取 消","注 册"]
+	}
+  },
+  "Setting":{
+	"title":"设置",
+	"Language":"系统语言",
+	"Currency":"货币种类",
+	"addedValueTax":"增值税",
+	"ServiceTax":"服务税",
+	"DisplayDiscontinuedComponent":"显示停产组件",
+	"buttons":{
+		"cancel":"取 消",
+		"confirm":"确 定"
+	}
+  },
+  "ConfigureHardware": {
+    "title": "配置硬件",
+    "buttonLast": "上一步",
+    "buttonNext": "下一步"
+  },
   "details":{
 	"abstract":{
 		"customername": "客户名称",
@@ -90,5 +141,221 @@
 				"content3":"总容量"
 			}
 		}
+	},
+    "InternalPCIE": {
+      "lists": {
+        "InternalPCIEsetup": {
+          "title": "内部PCIE设置",
+          "content1": "增加板卡",
+          "content2": "已使用插槽",
+          "tips": "提示信息"
+        }
+      }
+    },
+    "backPlane": {
+      "prepositionBackPlane": {
+        "title": "前置背板"
+      },
+      "prepositionInternalDisk": {
+        "title": "前置硬盘",
+        "InternalDisk": {
+          "content1": "前置",
+          "content2": "添加硬盘",
+          "content3": "已使用插槽"
+        }
+      },
+      "infixBackPlane": {
+        "title": "中置背板"
+      },
+      "infixInternalDisk": {
+        "title": "中置硬盘",
+        "content1": "添加硬盘",
+        "content2": "已使用插槽"
+      }
+    },
+    "Power": {
+      "lists": {
+        "PowerSupply": {
+          "title": "电源配置",
+          "content1": "添加电源"
+        },
+        "PowerLine": {
+          "title": "电源线",
+          "content1": "添加电源线"
+        },
+        "Notice1": {
+          "title": "提示信息",
+          "content1": "配件总TDP",
+          "content2": "电源总TDP"
+        },
+        "Notice2": {
+          "title": "提示信息",
+          "content1": "统一的提示信息"
+        }
+      }
+    },
+  "Accessories": {
+    "lists": {
+      "Cable": {
+        "title": "线缆",
+        "content1": "添加线缆"
+      },
+      "GuideRail": {
+        "title": "导轨",
+        "content1": "增加导轨"
+      },
+      "PanelStyle": {
+        "title": "面板样式"
+      },
+      "language": {
+        "title": "基础语言"
+      },
+      "rests": {
+        "title": "其他",
+        "content1": "添加配件"
+      }
+    }
+  },
+  "ConfigureSoftware":{
+	"title":"配置软件",
+    "buttonLast": "上一步",
+    "buttonNext": "下一步"
+  },
+  "Software":{
+	"LogicalPartition":{
+		"title":"逻辑分区"
+	},
+	"OperatingSystem":{
+		"title":"操作系统"
+	},
+	"Application":{
+		"title":"应用程序"
+	},
+	"details":{
+		"list":{
+			"serialNumber":"序号",
+			"classify":"分类",
+			"describingAccessories":"配件描述",
+			"Quantity":"数量",
+			"price":"价格表"
+		},
+		"aggregate":"总列表价",
+		"discount":"折扣",
+		"discountedPrice":"折扣价"
 	}
+  },
+  "LogicalPartition": {
+	"lists":{
+		"LogicalPartition":{
+			"title":"逻辑分区",
+			"content1":"逻辑分区"
+		},
+		"VirtualizationSoftware":{
+			"title": "虚拟化软件",
+			"content1":"维保期限"
+		}
+	}
+  },
+  "OperatingSystem":{
+	"lists":{
+		"MainOperatingSystem":{
+			"title":"主要操作系统",
+			"content1":"激活核心数",
+			"content2":"维保期限"
+		},
+		"MinorOperatingSystem":{
+			"title":"次要操作系统",
+			"content1":["激活核心数","维保期限"],
+			"content2":["激活核心数","维保期限"]
+		}
+	}
+  },
+  "Application":{
+	"lists":{
+		"SelectApplication":{
+			"title":"选择程序",
+			"content1":"维保期限"
+		}
+	}
+  },
+  "CompleteTheConfiguration":{
+	"title":"确认配置",
+	"btnAccomplish":"完成",
+	"btnLastStep":"上一步",
+	"lists":{
+		"hardware":{
+			"title":"硬件",
+			"list":{
+				"serialNumber":"序号",
+				"classify":"分类",
+				"describingAccessories":"配件描述",
+				"amount":"数量"
+			}
+		},
+		"software":{
+			"title":"软件",
+			"list":{
+				"serialNumber":"序号",
+				"classify":"分类",
+				"describingAccessories":"配件描述",
+				"amount":"数量"
+			}
+		}
+	}
+  },
+  "Proback":{
+	"machinetitle":"机器",
+	"inventory":"配置清单",
+	"back":"返 回",
+	"hardware":{
+		"title":"硬件",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"software":{
+		"title":"软件",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"machinename":{
+		"title":"机器",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"aggregate":{
+		"TotalMachinePrice":"机器总价",
+		"quantity":"机器数量",
+		"discountedprice":"折扣总价"
+	},
+	"list":{
+		"serialNumber":"序号",
+		"classify":"分类",
+		"describingAccessories":"配件描述",
+		"amount":"数量",
+		"TotalPrice":"列表价"
+	}
+  },
+  "EditScheme":{
+		"title":"编辑方案",
+		"save":"保 存",
+		"back":"返 回",
+		"abstract":{
+			"customername": "客户名称",
+			"projectname": "项目名称",
+			"scenarioname":"方案名称",
+			"salesmanager":"销售经理",
+			"deliverydate":"发货日期",
+			"salesbeforeManager":"售前经理",
+			"postscript":"备注信息"
+		}
+  }
 }

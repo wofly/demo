@@ -2,9 +2,9 @@
     <div>
         <div class="g-common-table">
             <div class="g-table-top">
-                <span class=" g-title-text">选择产品</span>
+                <span class=" g-title-text">{{$t('productSelect.title')}}</span>
                 <div class="g-table-btn-group ">
-                    <el-button size="small" type="primary" @click="reload">返 回</el-button>
+                    <el-button size="small" type="primary" @click="reload">{{$t('productSelect.button')}}</el-button>
                 </div>
             </div>
         </div>

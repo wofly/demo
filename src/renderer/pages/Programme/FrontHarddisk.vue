@@ -1,7 +1,7 @@
 <template>
    <div class="addct">
        <p class="title content-label">
-           <span class="config-title">Internal Disk</span>
+           <span class="config-title">{{$t('backPlane.prepositionInternalDisk.title')}}</span>
        </p>
        <div class="modify for-main" v-for="(ite,ind) in arr" :key="ind">
            <el-select v-model="value"  size="mini"
@@ -35,35 +35,48 @@
        </div>
 
        <br>
-       <span  class="tips">前置:{{numN}}GB</span>
+       <span v-if="this.$route.query.showMax" class="tips">{{$t('backPlane.prepositionInternalDisk.InternalDisk.content1')}}:{{totalCapacity}}GB</span>
+       <span v-if="!this.$route.query.showMax" class="tips">{{$t('backPlane.prepositionInternalDisk.InternalDisk.content1')}}:{{this.$parent.$parent.totalCapacity}}GB</span>
        <br>
        <el-button size="mini" icon="el-icon-plus" @click="add()" class="add"></el-button>
-       <span class="add-cables">添加硬盘</span>
+       <span class="add-cables">{{$t('backPlane.prepositionInternalDisk.InternalDisk.content2')}}</span>
        <br>
-       <span  class="tips">已使用插槽：{{numS}} /{{num}} </span>
+       <span  class="tips">{{$t('backPlane.prepositionInternalDisk.InternalDisk.content3')}}：{{numS}} /{{num}} </span>
    </div>
 </template>
 
 <script>
+
     export default {
         name: "FrontHardDisk",
         props:['num','sign'],
 
         data(){
             return {
+                // 硬盘类型v-model
                 value:0,
+                // 硬盘类型 下拉数据
+                SAS:[],
+                // 外层循环数组
                 arr:[],
+                // 存储 已选中 数据id
                 brr:[],
+                // 硬盘型号 下拉数据
                 arAy:[],
+                // 已选中的数据，最大容量
                 numN:0,
+                // 已选中的插槽数
                 numS:0,
-                SAS:[]
+                // 获取总硬盘容量
+                totalCapacity:'',
             }
         },
 
-
         methods:{
+            /*存储硬盘数据  型号与个数*/
           set(ind,id,num) {
+              /*显示隐藏总容量*/
+              this.$route.query.showMax = true;
               let time=new Date().getTime()
               if(num){
                   this.arr[ind].num=1
@@ -112,13 +125,20 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
               }
 
           },
+            /*添加已选中数据*/
           add(){
               if(this.numS>=this.num){
                   return
               }
+
+              /*显示隐藏总容量*/
+              this.$route.query.showMax = true;
+
+              console.log(this.arAy)
            let lArr=this.arAy.filter(item=>{ //过滤后的数组
                   let num=true
                   this.brr.forEach(it=>{
+                      console.log(this.brr)
                       if(item.id==it){
                           num=false
                           return
@@ -133,10 +153,15 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
                   id:'',
                   numZ:this.num,
               })
+              console.log(this.arr)
               this.set(this.arr.length-1,lArr[0].id)
           },
+
+            /*删除已选中数据*/
             dele(index){
                 if (this.arr[index].id) {
+                    /*显示隐藏总容量*/
+                    this.$route.query.showMax = true;
                     const sql = `DELETE FROM product_programme_detail WHERE id = ${this.arr[index].id}`;
                     this.$db.run(sql, (err, res) => {
                             if (err) {
@@ -154,6 +179,7 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
                     })
                 }
             },
+            /* 选中或删除  计算总容量和已选插槽*/
             getNu(){
               this.numN=0
               this.numS=0
@@ -165,11 +191,20 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
                       }
                   })
               })
-                console.log(this.numN)
+                /* 将内部外部总容量  添加到localStorage 进行计算*/
+                let internalCapacity = this.numN;
+                localStorage.setItem('internalCapacity', internalCapacity);
+
+                this.totalCapacity = parseInt(localStorage.internalCapacity) + parseInt(localStorage.externalCapacity);
+
+                console.log( this.totalCapacity )
             },
+
+            /*计算硬盘可选最大值*/
             beforNum(bool,ind){
               if(bool){
                   let num=0
+                  console.log(this.arr)
                   this.arr.forEach((it,index)=> {
                     if(index!==ind){
                         num+=it.num
@@ -178,12 +213,16 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
                   this.arr[ind].numZ=this.num-num
               }
             },
+            /*将 选中数据，存储到 新数组中*/
             beforSet(bool,ind){
-              console.log(bool,ind)
                 if(bool){
+                    console.log(this.arr)
                     this.arr[ind].domlist=this.arr[ind].domlist.filter(item=>{
+
                         let num=true
+                        console.log(this.brr)
                         this.brr.forEach((it,index)=>{
+
                             if(item.id==it&&index!=ind){
                                 return num=false
                             }
@@ -194,13 +233,17 @@ VALUES('${localStorage.productId}','${localStorage.machineId}','${this.sign}','$
                 }
             }
         },
+
+        /*进入页面获取数据*/
         created() {
             let than =this
-            const SQL = `select disk_des,id,capacity from component_disk where disc_type in(
+            const SQL = `select info.description disk_des,disk.id,capacity from component_disk disk
+            left join component_base_info info on info.id=disk.base_info_id where disc_type in(
 SELECT disc_type FROM "component_disk" cd left join backplane_disk bd on cd.id=bd.disk_id where bd.id in(select disk_id
 from backplane_disk where backplane_id=4)group by disc_type having count(disc_type)>=0)`
             const SQLSAS=`SELECT disc_type FROM "component_disk" cd left join backplane_disk bd on cd.id=bd.disk_id where bd.id in(select disk_id
             from backplane_disk where backplane_id=1)`
+            console.log(SQL)
              new Promise(function(resolve, reject) {
                 than.$db.all(SQL, (err, res) => {
                     if (err) {
@@ -215,7 +258,8 @@ from backplane_disk where backplane_id=4)group by disc_type having count(disc_ty
                 });
             }).then(res => {
                 console.log(res)
-                 this.arAy=[...res]
+                 this.arAy=[...res];
+                console.log(this.arAy)
                  than.arr.push({
                      domlist:[...res],
                      value:res[0].id,
@@ -224,8 +268,11 @@ from backplane_disk where backplane_id=4)group by disc_type having count(disc_ty
                      numZ:this.num
                  })
                  console.log(this.arr)
+                    /* 查询到  已存入product_programme_detail 表里的数据*/
                  let getSQL= ` select * from product_programme_detail where categroy_id='${this.sign}' and solution_id='${localStorage.solutionId}' and product_id='${localStorage.productId}' and
-            template_id='${localStorage.templateId}' and machine_id='${localStorage.machineId}'  and component_id !=25`
+            template_id='${localStorage.templateId}' and machine_id='${localStorage.machineId}'  and component_id !=25
+            and is_expansion = 1`
+                 console.log(getSQL)
                  this.$db.all(getSQL, (err, res) => {
                      if (err) {
                          this.$logger(err);
@@ -234,6 +281,7 @@ from backplane_disk where backplane_id=4)group by disc_type having count(disc_ty
                              desc: err,
                          });
                      } else {
+
                         if(res.length>0){
                             this.arr=[]
                             this.brr=[]

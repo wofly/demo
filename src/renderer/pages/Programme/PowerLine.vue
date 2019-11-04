@@ -2,7 +2,7 @@
   <!--电源页面-->
   <div class="wrap">
     <div class="out-p content-label">
-      电源配置
+      {{$t('Power.lists.PowerSupply.title')}}
     </div>
     <!--下拉框选项-->
     <div v-for="(ite,index) in Clkadd" :key="index" class="for-main">
@@ -26,11 +26,11 @@
     </div>
     <div class="addBtn" :title="titshow">
       <el-button class="addtn" size="mini" icon="el-icon-plus" @click="addClk" disabled></el-button>
-      <span class="add-cables">添加电源</span>
+      <span class="add-cables">{{$t('Power.lists.PowerSupply.content1')}}</span>
     </div>
 
     <div class="out-p content-label">
-      电源线
+      {{$t('Power.lists.PowerLine.title')}}
     </div>
 
     <div v-for="(ite) in Clkadd2" class="for-main">
@@ -38,8 +38,8 @@
         <el-option
             v-for="(item,ind) in setNums"
             :key="ind"
-            :value="item.des"
-            :label="item.setNums"
+            :value="ind"
+            :label="item.des"
             :disabled="item.disabled"
         >
         </el-option>
@@ -56,21 +56,21 @@
     </div>
     <div class="addBtn" :title="titshow">
       <el-button class="addtn" size="mini" icon="el-icon-plus" @click="addClk2" disabled></el-button>
-      <span class="add-cables">添加电源线</span>
+      <span class="add-cables">{{$t('Power.lists.PowerLine.content1')}}</span>
     </div>
 
     <div class="out-p content-label">
-      提示信息
+      {{$t('Power.lists.Notice1.title')}}
     </div>
     <ul>
-      <li>配件总TDP：<span>{{poweradd}}W</span></li>
-      <li>电源总TDP：<span>{{rabbet}}W</span></li>
+      <li>{{$t('Power.lists.Notice1.content1')}}：<span>{{poweradd}}W</span></li>
+      <li>{{$t('Power.lists.Notice1.content2')}}：<span>{{rabbet}}W</span></li>
     </ul>
     <div class="out-p content-label">
-      提示信息
+      {{$t('Power.lists.Notice2.title')}}
     </div>
     <div>
-      <span>统一得提示信息</span>
+      <span>{{$t('Power.lists.Notice2.content1')}}</span>
     </div>
   </div>
 </template>
@@ -100,8 +100,8 @@ export default {
       poweradd: 0,
       powId: [],
       powlineId: [],
-      frontHarddiskId: null,
-      frontHarddiskId2: null,
+      frontHarddiskId: '',
+      frontHarddiskId2: '',
     };
   },
   methods: {
@@ -124,9 +124,8 @@ export default {
     },
     getDataList() {
       // 获取数据
-      const SQL = 'select id,power_type,power,line_maxcount,line_mincount from component_power'; // 电源
-      const SQLNUM = 'SELECT line.line_des FROM component_powerline line left join relation_power_powerline re on line.id=re.powerline_id\n' +
-                    'where line.id in(select powerline_id from relation_power_powerline)'; // 电源线
+      const SQL = 'select id,power_type,power,line_maxcount,line_mincount from component_power where base_info_id=6'; // 电源
+      const SQLNUM = 'SELECT info.description_en line_des FROM component_powerline line left join relation_power_powerline re on line.id=re.powerline_id left join component_base_info info on info.id=line.base_info_id where line.id in(select powerline_id from relation_power_powerline)'; // 电源线
       // let obj = {};
       this.$db.all(SQL, (err, res) => { // 获取电源
         if (err) {
@@ -167,7 +166,7 @@ export default {
               obj.disabled = false;
             }
             this.setNums.push(obj); // 获取所有电源线
-            // console.log(this.setNums, res);
+             console.log(this.setNums, res);
           }
         }
       });
@@ -193,9 +192,10 @@ export default {
 																			or  info.id=other.base_info_id
 	where detail.categroy_id in (1,2,3,5,6,7,17)
 	                                    and so.id='${localStorage.solutionId}'
-                                      and product_id='${localStorage.productId}'
-                                      and template_id='${localStorage.templateId}'
-                                      and machine_id='${localStorage.machineId}'`;
+                                        and product_id='${localStorage.productId}'
+                                        and template_id='${localStorage.templateId}'
+                                        and machine_id='${localStorage.machineId}'
+                                        and is_expansion=1`;
       const numMax = '';
       this.$db.all(MaxSum, (err, res) => {
 
@@ -211,7 +211,6 @@ export default {
           });
         } else {
           for (let i = 0; i < res.length; i++) {
-            console.log(res);
             this.poweradd += res[i].watt * 1 * res[i].component_count * 1;
           }
         }
@@ -229,8 +228,8 @@ export default {
     },
     setState(ind) { // 数据库存储数据
       console.log(ind, this.Clkadd);
-      if (this.frontHarddiskId != null) {
-        const updateSql = `UPDATE product_programme_detail set 'component_count'='4',component_id='1' where id=${this.Clkadd.frontHarddiskId}`;
+      if (this.frontHarddiskId != '') {
+        const updateSql = `UPDATE product_programme_detail set 'component_count'='4',component_id='1' where id=${this.frontHarddiskId}`;
         this.$db.run(updateSql, (err, res) => {
           if (err) {
             console.log(updateSql);
@@ -245,8 +244,9 @@ export default {
       } else {
         const time = new Date().getTime();
         const SQL = `INSERT INTO product_programme_detail
-    ('product_id','machine_id','categroy_id','component_id','component_count','seq_Key','solution_id','template_id')
-    VALUES('${localStorage.productId}','${localStorage.machineId}','5','1','4','${time}','${localStorage.solutionId}','${localStorage.templateId}')`;
+    ('product_id','machine_id','categroy_id','component_id','component_count','seq_Key','solution_id','template_id','is_expansion')
+    VALUES('${localStorage.productId}','${localStorage.machineId}','5','1','4','${time}','${localStorage.solutionId}','${localStorage.templateId}'
+    ,'1')`;
         this.$db.run(SQL, (err, res) => {
           if (err) {
             console.log(SQL);
@@ -266,7 +266,9 @@ export default {
                                                                         and solution_id='${localStorage.solutionId}'
                                                                         and product_id='${localStorage.productId}'
                                                                         and template_id='${localStorage.templateId}'
-                                                                        and machine_id='${localStorage.machineId}'`;
+                                                                        and machine_id='${localStorage.machineId}'
+                                                                        and is_expansion=1`;
+
               this.$db.get(selectSql, (err, res) => {
                 if (err) {
                   console.log(selectSql);
@@ -280,15 +282,16 @@ export default {
                   return;
                 }
                 this.frontHarddiskId = res.id;
-                console.log(res, this.Clkadd.frontHarddiskId);
+                console.log(this.frontHarddiskId);
               });
             }
           }
         });
       }
     },
+
     setState2() { // 数据库存储数据
-      if (this.frontHarddiskId2 != null) {
+      if (this.frontHarddiskId2 != '') {
         const updateSql = `UPDATE product_programme_detail set 'component_count'='4',component_id='
                 1' where id=1`;
         this.$db.run(updateSql, (err, res) => {
@@ -304,8 +307,9 @@ export default {
       } else {
         console.log(1111);
         const time = new Date().getTime();
-        const SQL = `INSERT INTO product_programme_detail('product_id','machine_id','categroy_id','component_id','component_count','solution_id','seq_Key','template_id')
-        VALUES('${localStorage.productId}','${localStorage.machineId}','8','1','4','${localStorage.solutionId}','${time}','${localStorage.templateId}')`;
+        const SQL = `INSERT INTO product_programme_detail('product_id','machine_id','categroy_id','component_id','component_count','solution_id','seq_Key','template_id','is_expansion')
+        VALUES('${localStorage.productId}','${localStorage.machineId}','8','1','4','${localStorage.solutionId}','${time}','${localStorage.templateId}'
+        ,1)`;
         this.$db.run(SQL, (err, res) => {
           if (err) {
             console.log(SQL);
@@ -326,7 +330,8 @@ export default {
                                                                         and solution_id='${localStorage.solutionId}'
                                                                         and product_id='${localStorage.productId}'
                                                                         and template_id='${localStorage.templateId}'
-                                                                        and machine_id='${localStorage.machineId}'`;
+                                                                        and machine_id='${localStorage.machineId}'
+                                                                        and is_expansion=1`;
               this.$db.get(selectSql, (err, res) => {
                 if (err) {
                   console.log(selectSql);
@@ -341,7 +346,6 @@ export default {
                 }
                 this.frontHarddiskId2 = res.id;
                 console.log(this.frontHarddiskId2);
-                console.log(this.Clkadd2);
               });
             }
           }
@@ -368,7 +372,7 @@ export default {
       obj2.setNums = this.setNums;
       obj2.powerLinemax = this.powerLinemax;
       this.value2 = '[6493]Power Cord 2.7m (9-ft), Drawer to Wall/OEM PDU,  (250V/10A)';
-      obj2.value2 = this.value2;
+      obj2.value2 = 0;
       obj2.powlineId = this.powlineId;
       obj2.powerLinemaxTop = this.powerLinemaxTop;
       obj2.frontHarddiskId = null;
@@ -376,14 +380,57 @@ export default {
       console.log(this.Clkadd2);
     },
   },
-  created() {
+  mounted(){
     this.getDataList();
     this.defaultList();
     this.defaultList2();
     this.getMax();
-    this.setState();
-    this.setState2();
   },
+  created() {
+
+    /*获取product_programme_detail  表里的 电源数据  查找id 进行赋值*/
+    const SQL = ` select detail.id,detail.categroy_id from product_programme_detail detail
+									 join component_power power on power.category_id=detail.categroy_id and detail.component_id=power.id
+									 where product_id='${localStorage.productId}'
+									  and solution_id='${localStorage.solutionId}'
+									  and machine_id='${localStorage.machineId}'
+									  and template_id='${localStorage.templateId}'
+									  and is_expansion=1`
+    this.$db.all(SQL, (err, res) => {
+      if (err) {
+
+      } else {
+        console.log(res)
+        if(res.length>0){
+          this.frontHarddiskId = res[0].id;
+          console.log(this.frontHarddiskId)
+        }
+
+      }
+    })
+
+    /*获取product_programme_detail  表里的 电源线数据  查找id 进行赋值*/
+    const SQLData = ` select detail.id,detail.categroy_id from product_programme_detail detail
+									 join component_categroy cate on cate.id=detail.categroy_id and detail.categroy_id=8
+									 join component_powerline line on line.id=detail.component_id
+									 where product_id='${localStorage.productId}'
+									 and solution_id='${localStorage.solutionId}'
+									 and machine_id='${localStorage.machineId}'
+									 and template_id='${localStorage.templateId}'
+									 and is_expansion=1`
+    this.$db.all(SQLData, (err, res) => {
+      if (err) {
+
+      } else {
+        if(res.length>0){
+          this.frontHarddiskId2 = res[0].id;
+          console.log(this.frontHarddiskId2)
+        }
+
+      }
+    })
+  },
+
   beforeRouteEnter(from, to, next) {
     next(vm => {
       vm.$emit('comup', from.query.id);

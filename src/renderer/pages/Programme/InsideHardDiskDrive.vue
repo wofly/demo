@@ -4,7 +4,7 @@
         <div>
             <div class="config cable">
                 <p class="title content-label">
-                    <span class="config-title">backplane</span>
+                    <span class="config-title">{{$t('backPlane.prepositionBackPlane.title')}}</span>
                 </p>
 
                 <!--前置背板-->
@@ -56,7 +56,7 @@
                 <!--中置背板-->
                 <div class="config">
                     <p class="title content-label">
-                        <span class="config-title">backplane</span>
+                        <span class="config-title">{{$t('backPlane.infixBackPlane.title')}}</span>
                     </p>
                     <div class="modify for-main">
                         <el-select size="mini" v-model="backplaneData" placeholder="请选择" disabled="disabled"
@@ -171,25 +171,8 @@
 
                 /*通过vuex 传入选中前置背板id, 从而选择面板*/
                 this.$store.backplaneId = this.frontHardDiskData;
-                /*获取前置背板描述*/
-                this.getBackplaneDescribe(id, num)
                 /*前置背板 选中的数据 存储数据库*/
                 this.addBackplaneData(id, num);
-            },
-
-            /*前置背板描述*/
-            getBackplaneDescribe(id, num) {
-                const SQL = `select * from component_backplane where id =${id}`;
-                this.$db.all(SQL, (err, res) => {
-                    if (err) {
-
-                    } else {
-                        for (let i = 0; i < res.length; i++) {
-                            /*前置背板描述*/
-                            this.frontBackplaneDescription = res[i].backplane_info;
-                        }
-                    }
-                })
             },
 
             /*前置背板 选中的数据 存储数据库*/
@@ -236,7 +219,8 @@
 
             /*获取所有背板下拉数据*/
             getBackplane() {
-                const SQL = `select * from component_backplane`;
+                const SQL = `select cb.*,info.description backplane_des from component_backplane cb left join component_base_info info
+                on info.id=cb.base_info_id`;
                 this.$db.all(SQL, (err, res) => {
                     if (err) {
 
@@ -267,8 +251,8 @@
             /*获取分离背板下拉数据*/
             getPanelData() {
                 this.separationBackplaneData = [];
-                const SQL = `select cb.* from component_backplane cb left join relation_backplane_backplane cbb
-                        on cb.id=cbb.choice_backplane_id where cb.id in
+                const SQL = `select cb.*,info.description backplane_des from component_backplane cb left join relation_backplane_backplane cbb on cb.id=cbb.choice_backplane_id left join component_base_info info
+                 on info.id=cb.base_info_id where cb.id in
                 (select s.carry_backplane_id from relation_backplane_backplane s where s.choice_backplane_id=1) AND cb.id=8`;
                 this.$db.all(SQL, (err, res) => {
                     if (err) {
@@ -348,31 +332,7 @@
                         })
                     }
                 }
-                this.getSplitBackplane(id, num);
             },
-
-
-            /*分离背板描述*/
-            getSplitBackplane(id, num) {
-                if(id != 0){
-                    const SQL = `select * from component_backplane where id =${id}`;
-                    this.$db.all(SQL, (err, res) => {
-                        if (err) {
-
-                        } else {
-                            for (let i = 0; i < res.length; i++) {
-                                /*分离背板描述*/
-                                this.splitBackplaneDescription = res[i].backplane_info;
-                            }
-                        }
-                    })
-                }else{
-                    /*分离背板描述*/
-                    this.splitBackplaneDescription = '';
-                }
-
-            },
-
             /*------------------------------------------------------中置背板------------------------------------------------------------*/
 
             /*存储中置背板数据*/
@@ -385,29 +345,7 @@
                     this.$children[7].storageHardDiskData(0,1,0);
 
                 }
-                this.getmiddleBackplaneDescribe(id, num);
                 this.addBackplaneList(id, num);
-            },
-
-            /*获取中置背板描述*/
-            getmiddleBackplaneDescribe(id, num) {
-                if(id != 0){
-                    const SQL = `select * from component_backplane where id =${id}`;
-                    this.$db.all(SQL, (err, res) => {
-                        if (err) {
-
-                        } else {
-                            for (let i = 0; i < res.length; i++) {
-                                /*中置背板描述*/
-                                this.middleBackplaneDescribe = res[i].backplane_info;
-                            }
-                        }
-                    })
-                }else{
-                    /*中置背板描述*/
-                    this.middleBackplaneDescribe = '';
-                }
-
             },
 
             /*往数据库里插入已选数据*/
@@ -515,15 +453,16 @@
             this.getPanelData();
             /*获取所有背板*/
             this.getBackplane();
-            /*获取前置背板描述*/
-            this.getBackplaneDescribe(1,1);
 
         },
 
+        /* 获取component_categroy 表中id */
         beforeRouteEnter(from,to,next){
             next(vm=>{
                 vm.$emit('comup',from.query.id)
+                // 硬盘id
                 vm.sign=from.query.sign;
+                // 背板id
                 vm.signT=from.query.signT;
                 console.log( vm.sign,vm.signT)
             })

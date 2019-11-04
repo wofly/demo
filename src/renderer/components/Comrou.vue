@@ -13,9 +13,9 @@
             </div><!--  点击展开事件 内部判断再次点击关闭-->
         </div>
         <div class="inheaderEac" ref='inheaderEac' @mouseleave="inheaderEac(-80)"><!--  移出关闭事件-->
-            <p @click="inheaderEac(-80);toProgrammeAdd();" >新建方案</p> <!--  点击关闭，并且跳转页面-->
-            <p>导入方案文件(*.xls)</p>
-            <p>导入方案文件(*.cfr)</p>
+            <p @click="inheaderEac(-80);toProgrammeAdd();" >{{$t('newProgram.newProgram')}}</p> <!--  点击关闭，并且跳转页面-->
+            <p>{{$t('newProgram.ImportPlan')}}(*.xls)</p>
+            <p>{{$t('newProgram.ImportPlan')}}(*.cfr)</p>
         </div>
         <div class="inheader-bor">
             <div v-for="(item,index) in this.navig" :key="index" class="nain" @click="fn(index,item)">
@@ -65,7 +65,7 @@
                                 id: localStorage.solutionId,
                             },
                         });
-        
+
                 this.$store.commit('getsolutionId',localStorage.solutionId) // 点击后把solutionId存入Vuex
             },
             // 跨组件锚点定位：点击触发vuex方法切换ID

@@ -1,9 +1,9 @@
 directories:
   output: build
   buildResources: build
-productName: ips-configurator
+productName: iConfig
 copyright: caandoll
-appId: org.caandoll.ips-configurator
+appId: org.caandoll.iConfig
 files:
   - filter:
       - dist/electron/**/*

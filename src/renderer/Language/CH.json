@@ -1,0 +1,501 @@
+{
+  "index": {
+    "Title": "欢 迎 使 用",
+	"Start": "开始",
+	"CreatePlan": "创建方案",
+	"ImportPlan": "导入方案",
+	"TheRecentPlan": "最近方案",
+	"Alibaba": "阿里巴巴",
+	"Baidu": "百度",
+	"BankOfChina": "中国银行",
+	"More": "更多",
+	"Help": "帮助",
+	"UpdateLog": "更新日志",
+	"HelpDocument": "帮助文档",
+	"Updates": "检查更新",
+	"AboutUs": "关于我们",
+    "IsNewVersion": "已经是最新版本",
+    "UpdateError": "网络出错，请重试"
+  },
+  "productSelect": {
+    "title": "选择产品",
+    "button": "返 回",
+	  "transverse": "横向扩展服务器",
+	  "portrait": "纵向扩展服务器"
+  },
+  "ChooseTemplate": {
+    "title": "选择模板",
+    "button": "返 回",
+    "lists": {
+      "InitialConfiguration": "初始配置",
+      "RecommendedConfiguration": "推荐配置"
+    }
+  },
+  "newProgram":{
+	"newProgram":"新建方案",
+	"ImportPlan":"导入方案文件",
+    "ProjectIntroduction" :"方案简介",
+ 	"SolutionOverview": "方案概述",
+	"PriceStatistics": "价格统计"
+  },
+  "Login":{
+	"Login":"登 录",
+	"Logout":"退 出 登 录",
+	"register":"注 册",
+	"Account":" 账 号",
+	"Password":" 密 码",
+	 "UserInstructions": "用户须知",
+	  "GetVerificationCode": "获取验证码",
+	"lists":{
+		"mailbox":"邮箱",
+		"EmailVerificationCode":"邮箱验证码",
+		"Password":"密码",
+		"confirmPassword":"再次确认密码",
+		"Name":"姓名",
+		"MobilePhone":"手机号",
+		"Company":"所属公司",
+		"Department": "所属部门",
+		"Position":"所属职位",
+		"PositionCannotBeEmpty":"职位不能为空",
+		"PleaseEnterEmail":"请输入邮箱",
+		"PleaseEnterALegalEmail":"请输入合法的邮箱",
+		"VerificationCode":"请输入邮箱验证码",
+		"DigitEmailVerificationCode":"请输入6位邮箱验证码",
+		"PleaseInputAPassword":"请输入密码",
+		"BitPassword":"密码为字母数字结合，6-32位密码",
+		"ThePasswordAgain":"请再次输入密码",
+		"TheTwoPasswordsAreInconsistent":"两次输入密码不一致!",
+		"PleaseEnterAName":"请输入姓名",
+		"OnlyChineseAndEnglishAreSupported":"只支持中文和英文",
+		"YourMobileNumber":"请输入手机号",
+		"TheCorrectMobileNumber":"请输入正确的手机号",
+		"DepartmentCannotBeEmpty":"部门不能为空",
+		"button":["取 消","注 册"],
+		"SecondsToResend":"秒后可重发"
+	}
+  },
+  "Setting":{
+	"title":"设置",
+	"Language":"系统语言",
+    "HintLanguage": "提示语言",
+	"Currency":"货币种类",
+	"addedValueTax":"增值税",
+	"ServiceTax":"服务税",
+	"DisplayDiscontinuedComponent":"显示停产组件",
+	"buttons":{
+		"cancel":"取 消",
+		"confirm":"确 定"
+	}
+  },
+  "ConfigureHardware": {
+    "title": "配置硬件",
+    "titleE950": "配置硬件 - E950",
+    "buttonLast": "上一步",
+    "buttonNext": "下一步",
+    "parts":"配件",
+	  "AddAccessories":"增加配件",
+	  "AddComponentsManually":"手动添加组件",
+	 "AddComponents":"增加组件",
+	  "PleaseAddTheContentOfFC":"请添加fc的内容",
+	  "PleaseAddTheDescriptionOfFC":"请添加fc的描述",
+	  "PleaseAddTheNumberOfFC":"请添加fc的数量",
+	  "ModifiedSuccess":"修改成功",
+	  "AddSuccess":"添加成功",
+	  "DeleteSuccessful":"删除成功"
+  },
+  "details":{
+	"abstract":{
+		"customername": "客户名称",
+		"projectname": "项目名称",
+		"scenarioname":"方案名称",
+		"salesmanager":"销售经理",
+		"deliverydate":"发货日期",
+		"salesbeforeManager":"售前经理",
+		"postscript":"备注信息"
+	},
+	"header":{
+		"EditPackages": "编辑方案",
+		"AddTheMachine": "添加机器",
+		"TheOverallValidation": "配置校验",
+		"ImportSolution": "导入方案",
+		"ConvertTools":"CFR转换",
+		"ExportPlan": "导出方案",
+		"DeleteProgram": "删除方案",
+		"RemoveMachine": "删除机器",
+		"ImportSchemeFile": "导入方案文件",
+		"ExportPlanFile": "导出方案文件",
+		"BatchExportMachineFile": "批量导出机器文件"
+	},
+	"lists":{
+		"scenarioName": "方案名称",
+		"ProjectIntroduction": "方案简介",
+		"ProgramOverview": "方案概述",
+		"PriceStatistics": "价格统计",
+		"machineConfiguration": "机器配置"
+	},
+	"detailList": {
+		"serialNumber": "序号",
+		"productName": "产品名称",
+		"remarks": "备注名称",
+		"quantity": "数量",
+		"ListPrice": "列表价($)",
+		"ListPriceRen": "列表价(￥)",
+		"discount": "折扣（ % ）",
+		"salesPriceNoTax": "销售价（未税）",
+		"salesPricePlusDuty": "销售价（含税）"
+	},
+	"machine": {
+		"hardware": "硬件配置",
+		"software": "软件配置",
+		"operatingSystem": "操作系统",
+		"rests": "其他软件",
+		"wei": "个",
+		"core": "核",
+		"threadProcessors": "线程处理器",
+		"MemoryCapacity": "内存容量",
+		"HardDriveCapacity": "硬盘容量",
+		"machi": "个机器"
+	},
+	"buttons": {
+		"machineConfiguration": "配置机器",
+		"ExportMachine": "导出机器",
+		"ExportMachineFiles": "导出机器文件",
+		"Including": "其中共包含 ",
+		"product": "款产品",
+		"Thisplanis": "本方案是",
+		"Customizationschemefor": "的定制化方案"
+	}
+  },
+	"Processor": {
+		"lists": {
+			"computationalNode":{
+				"title":"计算节点",
+				"content1":"计算机节点数"
+			},
+			"CPUconfiguration":{
+				"title":"CPU配置",
+				"content1":"已使用插槽"
+			},
+			"ActiveConfiguration":{
+				"title":"激活配置",
+				"NumberOfRegularActivationCores":"常规激活核心数",
+				"TotalCoreNumber":"总核心数",
+				"NumberOfNuclearDayDctivationOf":"1CPU核天激活数",
+				"content1":"已激活核心数量"
+			},
+			"promptMessage":{
+				"title":"提示信息",
+				"content1":"配置1颗CPU时，可配置16根内存，8个PCIe卡。",
+				"content2":"配置2颗CPU时，可配置32根内存，11个PCIe卡。"
+			}
+		}
+	},
+	"Memory": {
+		"lists":{
+			"MemoryAllocation":{
+				"title":"内存配置",
+				"MemoryBackplane":"内存背板",
+				"content1":"添加内存条",
+				"content2":"已使用插槽",
+				"MemoryBar":"内存条",
+				"GeneralActivationCapacity":"常规激活容量",
+				"ElasticActivationCapacity":"弹性激活容量",
+				"content3":"总容量",
+				"AdvancedConfiguration":"高级配置",
+				"StabilizingPlate":"稳压板"
+			}
+		}
+	},
+    "InternalPCIE": {
+      "lists": {
+        "InternalPCIEsetup": {
+          "title": "内部PCIE设置",
+          "content1": "增加板卡",
+          "content2": "已使用插槽",
+          "tips": "提示信息"
+        }
+      }
+    },
+	"ExternalPcieChild": {
+		"expansionTank": "I/O扩展柜",
+		"extensionCabinetCable": "I/O扩展柜 线缆",
+		"PcieConfigure": "PCIe 配置",
+		"AdditionalCable": "增加连接线",
+		"DescriptionOfPowerCord": "电源线描述"
+	},
+	"ExternalHardDiskExpansion": {
+		"HardDiskExpansionCabinet": "硬盘扩展柜",
+		"IncreaseTheHardDiskCabinet": "添加硬盘扩展柜",
+		"TotalHardDiskCapacity": "机器硬盘总容量",
+		"AddExpansionEnclosure":"增加扩展柜",
+		"IncreaseTheHardDisk": "增加硬盘",
+		"HardDiskExtensionCabinetCable":"扩展柜线缆",
+		"ExpansionCabinetHardDisk": "扩展柜硬盘",
+		"AdvancedConfiguration": "高级配置",
+		"Number": "[EHS2]扩展柜SSD分区数量",
+		"tips":"提示信息",
+		"Occupied":"硬盘扩展柜被占用,用被删除的硬盘扩展柜启动",
+		"HardDiskExpansionEnclosureOccupied":"硬盘扩展柜被占用",
+        "InsufficientSlots":"插槽数不够",
+        "HardDiskOccupiedExpansionEnclosure":"硬盘占用扩展柜"
+	},
+    "backPlane": {
+		"PartsDiscontinued":{
+			"PartsDiscontinued":"此部件将于",
+			"StopProduction":"停产",
+			"DistanceFromProductionStopDate":"距离停产日期还有",
+			"day":"天"
+		},
+      "prepositionBackPlane": {
+        "title": "前置背板"
+      },
+      "prepositionInternalDisk": {
+        "title": "前置硬盘",
+	    "preload": "软件预装",
+		  "AdvancedConfiguration": "高级配置",
+		  "PreinstalledSoftware":"需要预装软件",
+		  "SystemStartRule":"系统启动规则",
+		  "tips":"提示信息",
+        "InternalDisk": {
+          "content1": "前置",
+          "content2": "添加硬盘",
+          "content3": "已使用插槽"
+        }
+      },
+      "infixBackPlane": {
+        "title": "中置背板"
+      },
+      "infixInternalDisk": {
+        "title": "中置硬盘",
+        "content1": "添加硬盘",
+        "content2": "已使用插槽"
+      }
+    },
+    "Power": {
+      "lists": {
+        "PowerSupply": {
+          "title": "电源配置",
+          "content1": "增加电源"
+        },
+        "PowerLine": {
+          "title": "电源线",
+          "content1": "增加电源线"
+        },
+        "Notice1": {
+          "title": "提示信息",
+          "content1": "配件总TDP",
+          "content2": "电源总TDP"
+        },
+        "Notice2": {
+          "title": "提示信息",
+          "content1": "统一的提示信息"
+        }
+      }
+    },
+  "Accessories": {
+    "lists": {
+      "Cable": {
+        "title": "线缆",
+        "content1": "添加线缆"
+      },
+      "GuideRail": {
+        "title": "导轨",
+        "content1": "增加导轨"
+      },
+      "PanelStyle": {
+        "title": "面板样式"
+      },
+      "language": {
+        "title": "基础语言"
+      },
+      "rests": {
+        "title": "其他",
+        "content1": "添加配件"
+      }
+    }
+  },
+  "ConfigureSoftware":{
+	"title":"配置软件",
+    "buttonLast": "上一步",
+    "buttonNext": "下一步"
+  },
+  "Software":{
+	"LogicalPartition":{
+		"title":"逻辑分区"
+	},
+	"OperatingSystem":{
+		"title":"操作系统"
+	},
+	"Application":{
+		"title":"应用程序"
+	},
+	"details":{
+		"list":{
+			"serialNumber":"序号",
+			"classify":"分类",
+			"describingAccessories":"配件描述",
+			"exceptionPrompt": "异常提示",
+			"Quantity":"数量",
+			"price":"列表价"
+		},
+		"aggregate":"总列表价",
+		"discount":"折扣",
+		"discountedPrice":"折扣价"
+	}
+  },
+  "LogicalPartition": {
+	"lists":{
+		"LogicalPartition":{
+			"title":"逻辑分区",
+			"content1":"逻辑分区"
+		},
+		"VirtualizationSoftware":{
+			"title": "虚拟化软件",
+			"content1":"维保期限"
+		}
+	}
+  },
+  "OperatingSystem":{
+	"lists":{
+		"MainOperatingSystem":{
+			"ApplicationProgram":"应用程序",
+			"title":"主要操作系统",
+			"content1":"激活核心数",
+			"content2":"维保期限"
+		},
+		"MinorOperatingSystem":{
+			"title":"次要操作系统",
+			"content1":["激活核心数","维保期限"],
+			"content2":["激活核心数","维保期限"]
+		}
+	}
+  },
+  "Application":{
+	"lists":{
+		"SelectApplication":{
+			"title":"选择程序",
+			"content1":"维保期限"
+		}
+	}
+  },
+  "CompleteTheConfiguration":{
+	"title":"确认配置",
+	"btnAccomplish":"完成",
+	"btnLastStep":"上一步",
+	"lists":{
+		"hardware":{
+			"title":"硬件",
+			"list":{
+				"serialNumber":"序号",
+				"classify":"分类",
+				"describingAccessories":"配件描述",
+				"exceptionPrompt": "异常提示",
+				"amount":"数量"
+			}
+		},
+		"software":{
+			"title":"软件",
+			"list":{
+				"serialNumber":"序号",
+				"classify":"分类",
+				"describingAccessories":"配件描述",
+				"exceptionPrompt": "异常提示",
+				"amount":"数量"
+			}
+		}
+	}
+  },
+  "Proback":{
+	"machinetitle":"机器",
+	"inventory":"配置清单",
+	"back":"返 回",
+	"hardware":{
+		"title":"硬件",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"software":{
+		"title":"软件",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"machinename":{
+		"title":"机器",
+		"list":{
+			"TotalPrice":"列表总价",
+			"Discount":"折扣",
+			"DiscountedPrice":"折扣总价"
+		}
+	},
+	"aggregate":{
+		"TotalMachinePrice":"机器总价",
+		"quantity":"机器数量",
+		"discountedprice":"折扣总价"
+	},
+	"list":{
+		"serialNumber":"序号",
+		"classify":"分类",
+		"describingAccessories":"配件描述",
+		"exceptionPrompt": "异常提示",
+		"amount":"数量",
+		"TotalPrice":"列表价"
+	}
+  },
+  "EditScheme":{
+	    "newProgram":"新建方案",
+		"title":"编辑方案",
+		"save":"保 存",
+		"back":"返 回",
+		"abstract":{
+			"customername": "客户名称",
+			"projectname": "项目名称",
+			"scenarioname":"方案名称",
+			"salesmanager":"销售经理",
+			"deliverydate":"发货日期",
+			"salesbeforeManager":"售前经理",
+			"postscript":"备注信息"
+		}
+  },
+	"error":{
+		"PCIeExpansion":"您的内部PCIe的插槽数不足，所以不能添加PCIe扩展柜",
+		"IOExpansion":"您的外部硬盘扩展柜占用外部PCIe的插槽，所以不能删除IO扩展柜",
+		"IOExpansionEnclosure": "您的外部PCIe卡不为空，所以不能删除IO扩展柜",
+		"beReduced": "您的外部PCIe卡大于所选的槽数，所以不能减少外部PCIe的数量",
+		"externalPCIe": "您的外部PCIe卡大于所选的槽数，所以不能减少外部PCIe的内瓤的数量",
+		"cannotDelete": "启动为HBA,所以不可以进行删除",
+		"wholeSystem": "整系统内必须有至少一个LAN卡",
+		"occupied":"扩展柜被占用",
+		"InsufficientSlots": "插槽数不够",
+		"failedChange": "内存里的选项有误,更改失败",
+		"changeFailed": "外部pcie的模组过多,更改失败",
+		"X83Internal": "pcie内的x8_3内型选择过多,更改失败",
+		"X84Internal": "pcie内的x8_4内型选择过多,更改失败",
+		"X164Internal": "pcie内的x16_4内型选择过多,更改失败",
+		"CpuAndMemory": "请先更改内存背板数量",
+		"CpuAndPcie": "内部插槽数被占用,不可被更改",
+		"MemoryBackplane": "内存板已经被占用",
+		"FrontBackplane": "选中数量，不可大于最大",
+		"BackplaneandHardDisk": "背板为EJ0B 不支持SAS下的硬盘",
+		"FrontBackplaneHardDisk": "内部的插槽数不够，连接线不能使用，不能切换背板",
+		"FrontHardDisk": "当背板为EJOC时,需要保留一个U.2",
+		"FrontHardDiskU": "U.2盘最多能选4个",
+		"loginAgain": "登录超时,请重新登录",
+		"department": "请输入所属部门",
+		"charactersLength": "2长度在2到10个字符",
+		"Machien": "请添加方案",
+		"customerName": "请输入客户名称",
+		"customerNameMax": "长度在 50 个字符",
+		"entryName": "请输入项目名称",
+		"schemeName": "请输入方案名称",
+		"desc": "长度在 200 个字符",
+		"date": "请选择日期",
+		"FrontHardDiskS": "SAS盘最多能选8个",
+		"saveData": "数据添加成功"
+	}
+}

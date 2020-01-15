@@ -1,13 +1,13 @@
 {
-  "name": "ips-configurator",
-  "version": "1.0.1",
-  "author": "caandoll <caandoll@aliyun.com>",
-  "description": "Easy invoicing system stand-alone desktop version,An electron-vue sqlite3 project",
+  "name": "iConfig",
+  "version": "1.0.2",
+  "author": "inspur",
+  "description": "inspur iConfig",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CaanDoll/easy-invoices.git"
+    "url": "http://39.104.101.123:8080/code/git/wangmengyu/ips-configurator.git"
   },
   "keywords": [
     "electron",
@@ -15,7 +15,7 @@
     "sqlite3"
   ],
   "scripts": {
-    "build": "node .electron-vue/build.js && electron-builder",
+    "build": "node --max_old_space_size=8192 .electron-vue/build.js .electron-vue/build.js && electron-builder",
     "build:ci": "node .electron-vue/build.js && electron-builder --publish always",
     "build:dir": "node .electron-vue/build.js && electron-builder --dir",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
@@ -30,12 +30,18 @@
     "packageVersion": "echo $npm_package_version"
   },
   "build": {
-    "productName": "ips-configurator",
-    "copyright": "caandoll",
-    "appId": "org.caandoll.ips-configurator",
+    "productName": "iConfig",
+    "copyright": "inspur",
+    "appId": "com.inspur.iConfig",
     "directories": {
       "output": "build"
     },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://172.31.2.182:8080/build"
+      }
+    ],
     "files": [
       "dist/electron/**/*"
     ],
@@ -68,9 +74,6 @@
       "allowToChangeInstallationDirectory": true
     }
   },
-  "gitHooks": {
-    "commit-msg": "node verify_commit_msg.js"
-  },
   "lint-staged": {
     "*.js": [
       "eslint --fix",
@@ -78,9 +81,14 @@
     ]
   },
   "dependencies": {
+    "electron-debug": "^1.4.0",
+    "electron-devtools-installer": "^2.2.0",
+    "electron-updater": "^2.23.3",
     "element-ui": "^2.11.1",
     "jquery": "^3.4.1",
+    "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "request": "^2.88.0",
     "sqlite3": "^4.0.1"
   },
   "devDependencies": {
@@ -120,6 +128,7 @@
     "iview": "^2.14.3",
     "less": "^3.7.1",
     "less-loader": "^4.1.0",
+    "vue-i18n": "^8.14.1",
     "lint-staged": "^7.2.0",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
@@ -129,7 +138,6 @@
     "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
     "vue-html-loader": "^1.2.4",
-    "vue-i18n": "^8.14.1",
     "vue-loader": "^13.0.5",
     "vue-router": "^2.5.3",
     "vue-style-loader": "^3.0.1",

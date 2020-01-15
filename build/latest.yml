@@ -1,8 +1,9 @@
 version: 1.0.1
 files:
   - url: ips-configurator-setup-1.0.1.exe
-    sha512: xSwirHlELeUjtXFUabV6F8iccU310v04Owarl1FEV8iajo7SyYY2uw4Ne+WD6KGGYRJjCI9xXYK+a/YpwBQW0Q==
-    size: 45163814
+    sha512: y2UxYZHh705lvf87QHiMHbytXTolu0MKBwQq+bzMEr3gUcNEOZCYNzIhymfavfpfPV7DyI2KHPYH32zFr2YJDg==
+    size: 44354956
 path: ips-configurator-setup-1.0.1.exe
-sha512: xSwirHlELeUjtXFUabV6F8iccU310v04Owarl1FEV8iajo7SyYY2uw4Ne+WD6KGGYRJjCI9xXYK+a/YpwBQW0Q==
-releaseDate: '2019-09-23T02:35:51.928Z'
+sha512: y2UxYZHh705lvf87QHiMHbytXTolu0MKBwQq+bzMEr3gUcNEOZCYNzIhymfavfpfPV7DyI2KHPYH32zFr2YJDg==
+sha2: f481cf3daaec08df0ed93220ee8e9222d94eed5e453a844eedea93a07453af5f
+releaseDate: '2019-10-15T04:57:22.643Z'
